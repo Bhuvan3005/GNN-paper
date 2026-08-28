@@ -1,0 +1,15 @@
+\begin{table*}[t]
+\centering
+\caption{Statistical comparison of the two formulations on pooled out-of-fold predictions, per seed. Rows are seed replicates of a single hypothesis, not a family of hypotheses, so no multiplicity correction is applied.}
+\label{tab:formstats}
+\footnotesize
+\begin{tabular}{lrrrrrrr}
+\toprule
+Seed & AUC (feature-node) & AUC (patient-sim) & $\Delta$AUC & b & c & McNemar p & DeLong p \\
+\midrule
+42.0 & 0.9033 & 0.8909 & 0.0124 & 22.0 & 21.0 & 1.0 & 0.3506 \\
+7.0 & 0.8915 & 0.8903 & 0.0012 & 20.0 & 17.0 & 0.7423 & 0.9097 \\
+123.0 & 0.9005 & 0.8726 & 0.0279 & 11.0 & 23.0 & 0.0592 & 0.01708 \\
+\bottomrule
+\end{tabular}
+\end{table*}

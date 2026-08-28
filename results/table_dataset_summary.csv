@@ -1,0 +1,14 @@
+Property,Value
+Dataset file,Heart_disease_cleveland_new.csv
+Source,UCI Machine Learning Repository — Cleveland Heart Disease
+Samples,303
+Duplicate rows,0
+Input features,13
+Target column,target
+Classes,"[0, 1]"
+Class distribution,0: 164  |  1: 139
+Class balance (%),54.1 / 45.9
+Missing values (NaN),0
+Continuous features,"5: ['age', 'trestbps', 'chol', 'thalach', 'oldpeak']"
+Categorical features,"8: ['sex', 'cp', 'fbs', 'restecg', 'slope', 'ca', 'thal', 'exang']"
+Clinical risk factors (XAI ref. set),"6: ['cp', 'thalach', 'exang', 'oldpeak', 'ca', 'thal']"

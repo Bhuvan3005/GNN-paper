@@ -1,0 +1,22 @@
+\begin{table}[t]
+\centering
+\caption{Deployment characteristics of the feature-node model. Inference is inductive: patients are scored individually with no cohort present.}
+\label{tab:deploy}
+\small
+\begin{tabular}{p{3.1cm}p{4.6cm}}
+\toprule
+Property & Value \\
+\midrule
+Scores an isolated patient & Yes (inductive) \\
+Cohort graph required at inference & No \\
+Patients scored individually & 46 \\
+Max deviation vs batch scoring & 2.98e-08 \\
+Latency per patient, mean & 2.564 ms \\
+Latency per patient, median & 2.430 ms \\
+Latency per patient, p95 & 2.933 ms \\
+Trainable parameters & 1,281 \\
+Serialised model size & 11.4 KB \\
+Hardware & CPU only \\
+\bottomrule
+\end{tabular}
+\end{table}

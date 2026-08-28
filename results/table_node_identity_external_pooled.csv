@@ -1,0 +1,9 @@
+Operator,Node encoding,Contrast,Mean ΔROC-AUC,Wins / 15,Wilcoxon p (15 paired)
+GCN,Scalar node (current),Corr+MST − No graph,0.0514,15,6e-05
+GCN,Scalar node (current),Corr+MST − Fully connected,0.0366,15,6e-05
+GCN,+ Identity embedding (d=8),Corr+MST − No graph,-0.0127,1,0.00085
+GCN,+ Identity embedding (d=8),Corr+MST − Fully connected,0.0338,14,0.00043
+SAGE,Scalar node (current),Corr+MST − No graph,0.046,15,0.00065
+SAGE,Scalar node (current),Corr+MST − Fully connected,0.0503,14,0.0008
+SAGE,+ Identity embedding (d=8),Corr+MST − No graph,-0.0101,2,0.06403
+SAGE,+ Identity embedding (d=8),Corr+MST − Fully connected,0.0068,13,0.01565

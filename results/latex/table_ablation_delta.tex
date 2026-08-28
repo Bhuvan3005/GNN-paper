@@ -1,0 +1,23 @@
+\begin{table*}[t]
+\centering
+\caption{Ablation deltas relative to the full model.}
+\label{tab:ablation_delta}
+\footnotesize
+\begin{tabular}{lrrrrrr}
+\toprule
+Experiment & Accuracy & F1 & ROC-AUC & MCC & Recall & Specificity \\
+\midrule
+w/o MST (Corr only) & -0.0077 & -0.0035 & -0.0023 & -0.0116 & 0.0094 & -0.0222 \\
+Random graph & -0.0153 & -0.0075 & -0.0092 & -0.0223 & 0.0289 & -0.0527 \\
+Fully connected & -0.0088 & -0.0051 & -0.0077 & -0.0173 & 0.0142 & -0.0285 \\
+No graph (indep. nodes) & -0.0023 & -0.0055 & -0.0085 & -0.0018 & -0.0069 & 0.0018 \\
+1 GCN layer & -0.0044 & -0.0065 & -0.0045 & -0.0092 & -0.0048 & -0.0041 \\
+Max pooling & -0.0077 & 0.0009 & -0.011 & -0.0101 & 0.0336 & -0.0426 \\
+Add pooling & -0.0066 & -0.0035 & -0.0042 & -0.008 & 0.0122 & -0.0223 \\
+Dropout 0.0 & 0.0109 & 0.0068 & -0.001 & 0.0194 & -0.0096 & 0.0283 \\
+Dropout 0.5 & 0.0022 & 0.0017 & 0.001 & 0.0039 & 0.0 & 0.004 \\
+Hidden 16 & -0.0449 & -0.0219 & -0.1058 & -0.0789 & 0.024 & -0.103 \\
+Hidden 64 & 0.0054 & 0.0038 & -0.001 & 0.0076 & 0.0024 & 0.0076 \\
+\bottomrule
+\end{tabular}
+\end{table*}

@@ -1,0 +1,13 @@
+Experiment,Question,Contribution,Accuracy,F1,ROC-AUC,MCC,Recall,Specificity
+Full (Corr+MST),Does the full pipeline work?,C1: feature-graph,0.8109 ± 0.0652,0.7971 ± 0.0597,0.9051 ± 0.0413,0.6280 ± 0.1240,0.8011 ± 0.0748,0.8196 ± 0.1208
+w/o MST (Corr only),Do MST bridges add connectivity value?,C1: MST,0.8032 ± 0.0787,0.7936 ± 0.0692,0.9027 ± 0.0437,0.6164 ± 0.1468,0.8105 ± 0.0825,0.7974 ± 0.1464
+Random graph,Does the LEARNED topology matter vs. random edges?,C1: topology,0.7955 ± 0.0614,0.7896 ± 0.0545,0.8959 ± 0.0414,0.6056 ± 0.1115,0.8300 ± 0.0892,0.7669 ± 0.1303
+Fully connected,Is SELECTIVE construction better than all-edges?,C1: selectivity,0.8021 ± 0.0753,0.7920 ± 0.0729,0.8973 ± 0.0432,0.6107 ± 0.1428,0.8153 ± 0.0869,0.7911 ± 0.1208
+No graph (indep. nodes),Does message passing help at all?,C1: message-passing,0.8086 ± 0.0661,0.7916 ± 0.0685,0.8966 ± 0.0485,0.6262 ± 0.1276,0.7942 ± 0.1073,0.8214 ± 0.1191
+1 GCN layer,Is a second layer justified (over-smoothing)?,C2: depth,0.8064 ± 0.0606,0.7906 ± 0.0628,0.9005 ± 0.0423,0.6187 ± 0.1195,0.7963 ± 0.0916,0.8155 ± 0.1052
+Max pooling,Is mean pooling the right readout?,C3: readout,0.8032 ± 0.0778,0.7979 ± 0.0687,0.8940 ± 0.0518,0.6179 ± 0.1427,0.8347 ± 0.0827,0.7770 ± 0.1389
+Add pooling,Is mean pooling the right readout?,C3: readout,0.8042 ± 0.0644,0.7936 ± 0.0566,0.9008 ± 0.0361,0.6200 ± 0.1198,0.8132 ± 0.0900,0.7973 ± 0.1331
+Dropout 0.0,Is regularization necessary?,C4: regularization,0.8218 ± 0.0612,0.8038 ± 0.0586,0.9040 ± 0.0410,0.6473 ± 0.1189,0.7914 ± 0.0762,0.8480 ± 0.1037
+Dropout 0.5,Is heavier dropout better?,C4: regularization,0.8130 ± 0.0641,0.7988 ± 0.0599,0.9061 ± 0.0408,0.6319 ± 0.1223,0.8011 ± 0.0748,0.8237 ± 0.1170
+Hidden 16,Capacity sensitivity (smaller).,C5: capacity,0.7660 ± 0.1328,0.7752 ± 0.0773,0.7993 ± 0.2716,0.5491 ± 0.2413,0.8250 ± 0.1046,0.7166 ± 0.3005
+Hidden 64,Capacity sensitivity (larger).,C5: capacity,0.8163 ± 0.0587,0.8009 ± 0.0586,0.9040 ± 0.0414,0.6355 ± 0.1136,0.8034 ± 0.0782,0.8272 ± 0.0939

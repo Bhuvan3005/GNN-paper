@@ -1,0 +1,1423 @@
+%% =====================================================================
+%%  IEEE ACCESS SUBMISSION  --  main.tex
+%%
+%%  BUILD
+%%      bash build.sh          (pdflatex -> bibtex -> pdflatex x2)
+%%
+%%  DOCUMENT CLASS
+%%      This file AUTO-DETECTS the official IEEE Access class. To produce
+%%      the true IEEE Access layout, download the IEEE Access LaTeX
+%%      template from https://template-selector.ieee.org (select
+%%      "IEEE Access"), copy `ieeeaccess.cls' into this directory, and
+%%      rebuild -- no edits required. Until that file is present the
+%%      document falls back to IEEEtran, which is layout-compatible and
+%%      suitable for internal review.
+%%
+%%  BEFORE SUBMISSION  (search for the marker "SUBMISSION-TODO")
+%%      * author name(s), ORCID(s), IEEE membership grade
+%%      * affiliation and corresponding-author e-mail
+%%      * funding statement (or the explicit "no funding" wording)
+%%      * author biographies and photographs
+%% =====================================================================
+\IfFileExists{ieeeaccess.cls}
+  {\documentclass{ieeeaccess}\newcommand{\ACCESSCLASS}{1}}
+  {\documentclass[journal]{IEEEtran}\newcommand{\ACCESSCLASS}{0}}
+
+\usepackage{amsmath,amssymb}
+%% IEEE requires Times. newtx provides it for pdfTeX, XeTeX and LuaTeX
+%% alike, so the document typesets identically whichever engine is used.
+\usepackage{newtxtext,newtxmath}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{url}
+\usepackage[hidelinks]{hyperref}
+\usepackage{xcolor}
+\usepackage{textcomp}
+\graphicspath{{../figures/}}
+
+\newcommand{\tautab}{\ensuremath{\tau}}
+
+%% IEEE Access front-matter macros. Under IEEEtran these are undefined,
+%% so \providecommand turns them into harmless no-ops and the same
+%% source file compiles under either class.
+\providecommand{\history}[1]{}
+\providecommand{\doi}[1]{}
+\providecommand{\corresp}[1]{}
+\providecommand{\tfootnote}[1]{}
+
+\begin{document}
+
+\history{Date of publication xxxx 00, 0000, date of current version
+xxxx 00, 0000.}
+\doi{10.1109/ACCESS.2026.DOI}
+
+\title{Beyond Accuracy: A Feature-Node Graph Representation for
+Interpretable, Deployable and Transportable Cardiovascular Risk
+Prediction}
+
+%% ------------------------- SUBMISSION-TODO -------------------------
+%% Replace the placeholder author, affiliation, ORCID and e-mail below.
+%% -------------------------------------------------------------------
+\ifnum\ACCESSCLASS=1
+  \author{\uppercase{First A. Author}\authorrefmark{1},
+    \IEEEmembership{Student Member, IEEE}}
+  \address[1]{Department of Computer Science and Engineering,
+    Institution Name, City 000000, Country
+    (e-mail: author@institution.edu)}
+  \tfootnote{This work received no specific grant from any funding agency
+    in the public, commercial, or not-for-profit sectors.}
+  \corresp{Corresponding author: First A. Author
+    (e-mail: author@institution.edu).}
+\else
+  \author{\IEEEauthorblockN{First A. Author,~\IEEEmembership{Student
+      Member,~IEEE}}\\
+    \IEEEauthorblockA{Department of Computer Science and Engineering,
+      Institution Name, City 000000, Country\\
+      E-mail: author@institution.edu}%
+    \thanks{This work received no specific grant from any funding agency
+      in the public, commercial, or not-for-profit sectors.}%
+    \thanks{Corresponding author: First A. Author
+      (e-mail: author@institution.edu).}}
+\fi
+
+\maketitle
+
+\begin{abstract}
+On small clinical tabular cohorts, competing models frequently reach
+statistically indistinguishable accuracy, so accuracy alone is a weak
+basis for choosing between them. We evaluate a \emph{feature-node} graph
+formulation---each patient is an independent graph whose thirteen nodes
+are clinical features, with edges from training-fold Pearson dependence
+thresholded at $\tau=0.15$ and augmented with a minimum spanning
+tree---against three properties that should govern adoption when
+accuracy is tied: representation, deployability and transportability.
+Under a leakage-controlled five-fold protocol shared with six classical
+baselines (Logistic Regression, Random Forest, Gradient Boosting, a
+Multilayer Perceptron, XGBoost and LightGBM) over three seeds, a
+two-layer graph convolutional network is statistically indistinguishable
+from every one of them, including the two modern gradient-boosted-tree
+models (McNemar $p=0.70$ against Logistic Regression, $p=0.77$ against
+Random Forest, $p=1.00$ against XGBoost, $p=0.66$ against LightGBM) on
+303 patients; we report this parity as a finding, not an improvement. The formulation differs
+operationally: it is inductive, scoring single patients with no cohort
+present, reproducing batch predictions to $3\times10^{-8}$ in $2.6$\,ms
+from an $11.4$\,KB, $1{,}281$-parameter model, whereas the conventional
+patient-similarity GNN cannot score an isolated patient at all and
+collapses to a single-class predictor on one external cohort. Fitting
+every component on Cleveland and touching each external cohort once,
+the model attains higher ROC-AUC in all six model--cohort comparisons
+and retains calibration under shift where the linear baseline collapses
+($0.091$ versus $0.318$ expected calibration error on Hungarian);
+bootstrap intervals establish the advantage against Logistic Regression
+on two of three cohorts and against Random Forest on none. Ablation
+localises what matters to graph \emph{construction}---selective sparsity
+outperforms random and fully connected topologies---rather than to the
+convolution operator, which is statistically irrelevant. Code, seeds and
+all result tables are released.
+\end{abstract}
+
+%% IEEE Access prints this block as "INDEX TERMS"; IEEEtran prints it as
+%% "Index Terms". The content is identical, so the source is shared.
+\ifnum\ACCESSCLASS=1
+  \begin{keywords}
+  Cardiovascular disease, clinical tabular data, distribution shift,
+  explainable artificial intelligence, external validation, feature
+  graph, graph neural networks, inductive inference, model
+  transportability, representation learning.
+  \end{keywords}
+\else
+  \begin{IEEEkeywords}
+  Cardiovascular disease, clinical tabular data, distribution shift,
+  explainable artificial intelligence, external validation, feature
+  graph, graph neural networks, inductive inference, model
+  transportability, representation learning.
+  \end{IEEEkeywords}
+\fi
+
+\section{Introduction}
+\label{sec:intro}
+\IEEEPARstart{C}{ardiovascular} disease (CVD) remains the leading cause
+of mortality worldwide~\cite{world2021cvd}, and the early identification
+of at-risk patients from routinely collected clinical measurements is of
+considerable importance. Machine-learning models have been applied
+extensively to this task, yet two obstacles limit their clinical
+adoption: many high-performing models treat features independently and
+therefore ignore the well-documented interactions among cardiovascular
+risk factors, and the most accurate models are frequently opaque, which
+is problematic in a domain where accountability is
+essential~\cite{petch2022opening,ahmad2018survey}.
+
+Graph neural networks~\cite{kipf2017gcn,zhou2020gnnreview} offer a natural
+mechanism for modelling relational structure. In clinical applications
+they are most commonly instantiated as patient-similarity graphs, where
+nodes are patients and edges connect clinically similar individuals. Such
+formulations are transductive, require a cohort-level graph at inference
+time, and do not expose the interactions \emph{between features} that
+clinicians reason about. In this work we study the complementary
+\emph{feature-node} formulation: every patient is an independent graph
+whose nodes are the thirteen clinical features and whose fixed topology
+encodes feature--feature dependence. Message passing then propagates
+information along clinically meaningful feature relationships, and the
+resulting representation is inductive and inspectable.
+
+\textbf{Position of this paper.} We deliberately do not frame this work
+as a pursuit of higher accuracy. On a cohort of 303 near-balanced
+patients every competently tuned model saturates at ROC-AUC
+$\approx0.90$, and differences at that ceiling are dominated by splitting
+noise; a further decimal place of accuracy would be neither reproducible
+nor clinically meaningful. Nor do we claim architectural novelty: our
+own ablation shows that exchanging the convolution operator for GAT,
+GraphSAGE or GIN changes no metric significantly
+(Section~\ref{sec:ablation}). Framing the contribution in either of those
+terms would misdescribe what the evidence supports.
+
+Instead we evaluate the feature-node formulation against the three
+properties that we argue should govern the adoption of a clinical
+prediction model when accuracy is tied:
+
+\begin{itemize}
+\item[\textbf{P1}] \textbf{Representation.} Does the model expose the
+structure of the problem in a form a clinician can inspect and
+interrogate---an explicit map of how risk factors relate, and
+explanations that independent attribution methods agree upon?
+\item[\textbf{P2}] \textbf{Deployability.} Can the model score a single
+patient, in isolation, cheaply and without infrastructure---that is, is
+it inductive, compact and free of any requirement for a cohort at
+inference time?
+\item[\textbf{P3}] \textbf{Transportability.} When moved to a population
+it was not developed on, does it degrade gracefully, and does it fail
+safely rather than collapsing to a degenerate predictor?
+\end{itemize}
+
+Accuracy is reported throughout, but as a \emph{control}: our claim is
+that the feature-node representation is competitive, not superior, and we
+subject that parity to significance testing rather than obscuring it.
+Our contributions follow these three properties directly.
+
+\begin{enumerate}
+\item[\textbf{C1}] \textbf{Representation.} We formulate clinical tabular
+data as a feature-node graph in which correlation-derived edges are
+augmented by a minimum spanning tree, constructed inside each fold
+without information leakage and validated spectrally before any training
+occurs (Section~\ref{sec:graph}). We characterise this construction
+rather than merely asserting it: we show that the MST is a
+\emph{connectivity safeguard} that contributes no edges at the operating
+threshold and only becomes active for sparser graphs, that in the regime
+where it is active there is suggestive evidence that an MST-supported
+sparse topology is more favourable under distribution shift, even though
+it leaves in-distribution accuracy unchanged
+(Section~\ref{sec:tauregime}), and
+that a global
+correlation cut-off and an adaptive per-node $k$-NN rule of comparable
+density are statistically indistinguishable after correction for multiple
+comparisons (Sections~\ref{sec:threshold},~\ref{sec:construction}). We
+then establish that the representation yields convergent and clinically
+coherent explanations through a multi-method explainability evaluation
+across eight metrics, including deletion/insertion curves and
+cross-method agreement (Section~\ref{sec:xai}).
+
+\item[\textbf{C2}] \textbf{Deployability.} We compare the formulation
+directly against the conventional patient-similarity GNN and quantify the
+operational cost of transductivity: that baseline cannot score an
+isolated patient and must rebuild a graph over any cohort it is given,
+whereas the feature-node model is inductive, compact and requires no
+cohort at inference time
+(Sections~\ref{sec:formulation},~\ref{sec:deploy}).
+
+\item[\textbf{C3}] \textbf{Transportability.} We validate on
+three other sites within the same UCI Heart Disease collection under
+strict Cleveland-only fitting, with
+paired bootstrap intervals that propagate both sampling and
+initialisation uncertainty, showing a partial but consistent transport
+advantage and a difference in failure mode (Section~\ref{sec:external}).
+\end{enumerate}
+
+Underpinning all three is a leakage-controlled protocol in which the GCN
+and six classical baselines---including two modern gradient-boosted-tree
+models---share identical stratified cross-validation
+folds, in-fold scaling and inner-validation threshold tuning
+(Section~\ref{sec:setup}); a comprehensive ablation that localises what
+matters to graph \emph{construction} rather than architecture
+(Section~\ref{sec:ablation}); uniform Holm--Bonferroni control of
+multiplicity wherever a family of hypotheses is tested; and full public
+release of code, fixed seeds and result tables. Together these establish
+accuracy parity as a rigorously supported null result rather than an
+unexamined assumption.
+An overview of the methodology is shown in Fig.~\ref{fig:pipeline}.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{fig01_pipeline.png}
+\caption{Overall methodology pipeline. Preprocessing, correlation-graph
+construction with MST augmentation, patient-graph encoding, GCN training
+with inner-validation threshold tuning, and post-hoc explanation are all
+performed inside each cross-validation fold to prevent information
+leakage.}
+\label{fig:pipeline}
+\end{figure*}
+
+\section{Related Work}
+\textbf{Graph neural networks.} The graph convolutional network of Kipf
+and Welling~\cite{kipf2017gcn} popularised spectral-inspired neighbourhood
+aggregation; subsequent architectures introduced attention~\cite{velickovic2018gat},
+inductive sampling~\cite{hamilton2017graphsage}, and provably expressive
+aggregation~\cite{xu2019gin}. We adopt the GCN for its simplicity and
+because the small, fixed feature graph does not require the additional
+capacity of attention-based variants; the choice is validated
+empirically in our ablation.
+
+\textbf{GNNs for clinical data.} Most clinical GNNs are patient-similarity
+graphs, in which nodes are patients and edges encode cohort-level
+similarity~\cite{parisot2018disease}; recent surveys of graph
+representation learning in biomedicine and healthcare confirm that this
+patient-graph formulation remains the dominant paradigm across
+applications from disease progression to multi-omics
+integration~\cite{li2022graphrepbiomed,ektefaie2023multimodalgraphs}. The
+feature-node view used here---in which every patient is an independent
+graph over \emph{features} rather than a node in a graph over
+\emph{patients}---is comparatively under-explored in the clinical
+literature specifically, even though it has begun to appear in the
+general tabular-learning literature outside medicine: T2G-FORMER learns a
+relation graph over tabular features to promote heterogeneous feature
+interaction~\cite{yan2023t2gformer}, and a contextual graph-embedding
+approach similarly organises tabular columns as graph nodes for deep
+learning on non-relational data~\cite{villaizan2024gnncontextual}. A
+recent taxonomy of graph neural networks for tabular data explicitly
+separates ``instance graphs'' (patient-similarity, the dominant clinical
+case) from ``feature graphs'' (our formulation) as two distinct and
+under-balanced branches of the field, with the survey's own taxonomy
+counting substantially more instance-graph than feature-graph clinical
+applications~\cite{li2025gnntabularsurvey}. Competing approaches to
+tabular relational structure include attention-based tabular
+transformers, which learn feature interactions implicitly through
+self-attention rather than an explicit, inspectable graph, and which
+recent surveys note trade interpretability for flexibility relative to
+graph-structured alternatives~\cite{badaro2023transformerstabular}; and
+tabular foundation models such as TabPFN, which achieve strong accuracy
+on small tabular cohorts through in-context learning but, like
+attention-based transformers, do not expose an explicit feature-adjacency
+structure a clinician can inspect~\cite{hollmann2025tabpfn}. Rather than
+merely assert the feature-node formulation's advantage over the dominant
+patient-similarity paradigm, we implement a patient-similarity GNN as an
+explicit baseline and compare the two formulations both in-distribution
+and under transport (Sections~\ref{sec:formulation}
+and~\ref{sec:external}).
+
+\textbf{Explainable AI.} Post-hoc attribution has
+become central to trustworthy machine
+learning~\cite{samek2021xai}, and the case for interpretability as a
+first-class requirement---rather than a post-hoc add-on---in deployed
+clinical models has been argued at length in recent
+reviews~\cite{lisboa2023interpretablecoming}. Model-agnostic attribution
+methods such as SHAP remain the most widely adopted explanation tool in
+applied biomedical machine learning~\cite{poncebobadilla2024shap}, but
+they are computed post-hoc on models that do not themselves expose
+relational structure. We instead employ
+GNNExplainer~\cite{ying2019gnnexplainer}, which learns compact
+feature/edge masks directly on the feature graph, together with the
+gradient-based Integrated Gradients~\cite{sundararajan2017ig} and
+Saliency~\cite{simonyan2014saliency}, and evaluate them with fidelity,
+sparsity, stability, sensitivity~\cite{yeh2019infidelity} and
+deletion/insertion analyses.
+
+\section{Materials}
+\subsection{Dataset}
+We use the UCI Cleveland Heart Disease
+dataset~\cite{uci_heart,detrano1989}, comprising 303 patients described
+by thirteen clinical features and a binary target
+(Table~\ref{tab:dataset}). The prediction task is binary: presence
+($1$) versus absence ($0$) of cardiovascular disease. The cohort is
+nearly balanced ($164$ versus $139$), and there are no missing values in
+the version used. Feature definitions and clinical semantics are given in
+Table~\ref{tab:featdesc}. The class distribution motivates our use of
+threshold tuning and MCC rather than accuracy alone.
+
+\input{../results/latex/table_dataset_characteristics}
+\input{../results/latex/table_feature_descriptions}
+
+
+\subsection{Preprocessing}
+The five continuous
+features are scaled with min--max normalisation; categorical and ordinal
+features are retained as integer codes. Crucially, the scaler is fit on
+the training partition of each fold only and then applied to validation
+and test data, so no test-set statistics influence training.
+
+
+\section{Feature-Node Graph Construction}
+\label{sec:graph}
+\subsection{Correlation graph}
+Let $X_{\text{tr}}\in\mathbb{R}^{n\times 13}$ denote the scaled training
+features of a fold. We compute the Pearson correlation matrix
+$R\in\mathbb{R}^{13\times13}$ and create an undirected edge between
+features $i$ and $j$ whenever $|R_{ij}|\ge\tau$, with the threshold fixed
+at $\tau=0.15$. The threshold was selected by the sensitivity analysis of
+Section~\ref{sec:ablation} and held constant thereafter. The full-cohort
+correlation structure is visualised in Fig.~\ref{fig:heatmap}.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{fig03_correlation_heatmap.png}
+\caption{Pearson correlation matrix of the thirteen clinical features.
+Edges of the feature graph are instantiated for entries with
+$|r|\ge\tau=0.15$; the minimum spanning tree then adds the few bridges
+required for connectivity.}
+\label{fig:heatmap}
+\end{figure}
+
+\subsection{Minimum spanning tree augmentation}
+\label{sec:mst}
+A purely thresholded graph may be disconnected, which would prevent
+message passing from reaching isolated features. We therefore compute a
+minimum spanning tree over the complete weighted graph with edge distance
+$d_{ij}=1-|R_{ij}|$ using Prim's algorithm~\cite{prim1957}, and add any
+MST edge that is not already present. This guarantees a single connected
+component while preferring to bridge feature pairs that are as correlated
+as possible. The resulting canonical graph is shown in
+Fig.~\ref{fig:graph}, and its statistics---reported as mean$\pm$std across
+folds---appear in Table~\ref{tab:graphstats}.
+
+The augmentation is a \emph{safeguard}, and we are explicit about when it
+acts. Table~\ref{tab:mstactivation} reports the number of bridges it
+contributes as a function of $\tau$. For $\tau\le0.15$ the thresholded
+graph is already connected in all five folds and the MST adds no edges
+whatsoever; from $\tau=0.20$ onward the thresholded graph is disconnected
+in every fold and the MST supplies between $1.8$ and $9.6$ bridges on
+average. At our operating point of $\tau=0.15$ the MST is therefore
+\emph{inert}: it changes nothing. This is worth stating plainly, because
+it also explains the null result of the ``w/o MST'' row in the ablation
+of Section~\ref{sec:ablation}---at $\tau=0.15$ the two conditions describe
+an identical graph, so that row cannot test the MST at all.
+
+To test it we must move to a threshold where it is active. At $\tau=0.20$
+the thresholded graph splits into $2.8$ components on average and is
+connected in $0/5$ folds; adding the MST restores a single component in
+$5/5$ folds (Table~\ref{tab:mstconn}). Predictive performance, however, is
+unchanged: no metric differs significantly between the two conditions
+(F1 $0.7988$ vs.\ $0.7979$; ROC-AUC $0.9008$ vs.\ $0.9035$; MCC $0.6445$
+vs.\ $0.6241$; all Holm-adjusted $p=1.0$, Tables~\ref{tab:msttau}
+and~\ref{tab:msttaustats}).
+The MST is thus a \emph{robustness mechanism that restores connectivity
+without improving internal accuracy}, and we retain it on that basis
+rather than as a source of predictive gain. We emphasise \emph{internal}
+here because this conclusion is drawn entirely within the development
+cohort. Whether connectivity matters once the model is moved to a
+different cohort is a separate question that no in-distribution
+experiment can answer; we return to it in
+Section~\ref{sec:tauregime}, where the topologies are compared under
+distribution shift.
+
+\input{../results/latex/combined_mstact}
+\input{../results/latex/combined_msttau}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{fig04_feature_graph.png}
+\caption{Canonical feature-node graph ($\tau=0.15$). Edges are
+correlation edges (red positive, blue negative) with width proportional
+to $|r|$. Node colour encodes clinical grouping and node size encodes
+degree. No MST bridge is drawn because none is required at this
+threshold: the thresholded graph is already connected in every fold and
+the augmentation adds no edges (Table~\ref{tab:mstactivation}). Bridges
+appear only for $\tau\ge0.20$.}
+\label{fig:graph}
+\end{figure}
+
+\input{../results/latex/table_graph_statistics}
+
+\subsection{Spectral and centrality validation}
+Before training we validate the graph spectrally. The Laplacian is formed
+with absolute edge weights to preserve positive semi-definiteness, and
+its second-smallest eigenvalue (the Fiedler value~\cite{fiedler1973}) is
+strictly positive in every fold (Fig.~\ref{fig:spectral}), confirming
+connectivity. Degree centrality (Fig.~\ref{fig:centrality}) identifies \texttt{oldpeak}, \texttt{thalach}
+and \texttt{thal} as hub features; these coincide with the strongest
+target correlations, providing an independent,
+model-free indication that the graph concentrates clinically salient
+variables.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{fig05_spectral.png}
+\caption{Laplacian spectrum of the $|r|$-weighted feature graph. The
+positive Fiedler value $\lambda_2$ confirms a single connected component,
+the structural guarantee provided by the MST augmentation.}
+\label{fig:spectral}
+\end{figure}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{fig06_degree_centrality.png}
+\caption{Degree centrality of the feature nodes. Hub features coincide
+with the highest target-correlated variables, linking graph structure to
+clinical relevance.}
+\label{fig:centrality}
+\end{figure}
+
+
+\subsection{Patient-graph encoding}
+Every patient is encoded as a graph with thirteen nodes sharing the
+fold's edge index; the node feature vector is the patient's scalar value
+for each clinical feature, i.e.\ $x\in\mathbb{R}^{13\times1}$. Only the
+node values vary across patients; the topology is common within a fold.
+
+\section{Model}
+The classifier (Fig.~\ref{fig:arch}) stacks two graph convolutional
+layers~\cite{kipf2017gcn}, each followed by batch normalisation and ReLU,
+with dropout between layers. A global mean-pooling readout produces a
+graph-level embedding that a linear layer maps to a disease probability.
+Formally, with $H^{(0)}=X$ and normalised adjacency $\hat{A}$,
+\begin{equation}
+H^{(l+1)}=\mathrm{ReLU}\!\left(\mathrm{BN}\!\left(\hat{A}H^{(l)}W^{(l)}\right)\right),
+\end{equation}
+and the prediction is
+$\hat{y}=\sigma\!\left(w^\top\,\mathrm{MeanPool}(H^{(2)})+b\right)$.
+Hyperparameters are listed in Table~\ref{tab:hyperparams}.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{fig07_architecture.png}
+\caption{Two-layer GCN architecture with batch normalisation, dropout,
+global mean pooling and a sigmoid output head.}
+\label{fig:arch}
+\end{figure*}
+
+\input{../results/latex/table_hyperparameters}
+
+\section{Experimental Setup}
+\label{sec:setup}
+\subsection{Protocol}
+All models are evaluated with five-fold stratified cross-validation,
+repeated over three random seeds ($42,7,123$). Within each fold a
+stratified $15\%$ inner-validation split is used for early stopping and
+decision-threshold selection. Every preprocessing step---scaling and
+graph construction---is fit on the training partition only; test folds are
+never used for scaling, graph construction, model selection or threshold
+tuning. Reported values are mean$\pm$standard deviation across folds and
+seeds.
+
+\subsection{Baselines}
+Six classical models---Logistic Regression, Random Forest, Gradient
+Boosting, a Multilayer Perceptron, XGBoost~\cite{chen2016xgboost} and
+LightGBM~\cite{ke2017lightgbm}---are trained under \emph{identical}
+folds with in-fold standardisation and identical inner-validation
+threshold tuning, ensuring a strictly fair comparison. The two
+gradient-boosted-tree models are included specifically because they are
+the strongest tabular baselines in the current literature and were
+absent from the original baseline suite; their inclusion tests whether a
+more competitive classical model closes the accuracy-parity gap reported
+in Section~\ref{sec:results}.
+
+We additionally implement the \emph{conventional patient-similarity GNN}
+as a fifth baseline, so that the two graph formulations can be compared
+empirically rather than only conceptually. Nodes are patients, node
+features are the patient's scaled clinical values, and edges form a
+symmetric $k$-nearest-neighbour graph in feature space; the task is
+transductive node classification. Depth, hidden width, dropout,
+optimiser, early stopping, folds and seeds are identical to the
+feature-node model. To avoid understating the baseline, $k$ is swept over
+$\{5,10,15,20\}$ and the best value by ROC-AUC is retained ($k=15$). The
+scaler is fit on inner-training patients only and the $k$-NN graph is
+built from \emph{features alone}---never labels---with the loss masked to
+training nodes; test-node labels are never observed. Test-node features
+do participate in message passing, which is inherent to the transductive
+formulation and is precisely the property we wish to expose.
+
+\subsection{Metrics and statistics}
+We report accuracy, precision, recall, F1, ROC-AUC, MCC~\cite{matthews1975}
+and specificity. Statistical significance is assessed with McNemar's
+test~\cite{mcnemar1947} on the pooled out-of-fold predictions and the
+Wilcoxon signed-rank test~\cite{wilcoxon1945} on per-fold F1. Where
+configurations are compared on the identical (seed $\times$ fold)
+partitions, fold-level metrics are \emph{paired} and the signed-rank test
+is applied to those pairs.
+
+Wherever a family of hypotheses is tested together---several metrics,
+several baselines, or several cohorts within one analysis---we control the
+family-wise error rate with the Holm--Bonferroni
+procedure~\cite{holm1979} and report both the raw and the adjusted
+$p$-value, judging significance on the adjusted value. This policy is
+applied uniformly to every significance table in the paper. It is
+deliberately \emph{not} applied to the per-seed rows of
+Table~\ref{tab:formstats}, whose rows are replicates of a single
+hypothesis rather than distinct hypotheses; correcting across replicates
+would inflate the $p$-value of one test rather than control a family.
+
+\subsection{Reproducibility}
+\label{sec:repro}
+Experiments use Python~3.13, PyTorch~2.x~\cite{paszke2019pytorch},
+PyTorch~Geometric~2.7~\cite{fey2019pyg} and scikit-learn~1.7~\cite{pedregosa2011scikit}
+on CPU. Random seeds are fixed for NumPy, Python and PyTorch, and
+per-fold weight initialisation is seeded for determinism. The model has $1{,}281$ parameters; wall-clock training time and peak
+memory are reported with the released code.
+
+\textbf{Data and code availability.} The UCI Cleveland, Hungarian,
+Switzerland and Long-Beach-VA heart-disease cohorts are publicly
+available from the UCI Machine Learning
+Repository~\cite{uci_heart,detrano1989}. All experiment code, fixed
+seeds, generated result tables and figure-producing scripts are released
+at
+%% SUBMISSION-TODO: replace with the public repository (or archived DOI).
+\url{https://github.com/USERNAME/REPOSITORY}.
+Every table and figure in this paper is regenerated end-to-end by that
+code; no result is transcribed by hand.
+
+\section{Results and Discussion}
+\label{sec:results}
+\subsection{Predictive performance}
+Table~\ref{tab:comparison} reports the main comparison, which includes
+gradient-boosted-tree baselines (XGBoost, LightGBM) in addition to
+Logistic Regression, Random Forest and an MLP, all under the identical
+5-fold $\times$ 3-seed protocol with in-fold scaling and inner-validation
+threshold tuning. The feature-node GCN attains the highest mean ROC-AUC
+(0.906) and specificity (0.824) among all seven models; Logistic
+Regression is marginally ahead on accuracy (0.818 vs.\ 0.813), F1 (0.810
+vs.\ 0.799) and MCC (0.646 vs.\ 0.632), and Random Forest is comparable
+on ROC-AUC (0.904) but trails on the remaining metrics. The two
+boosted-tree baselines do not close the gap either: XGBoost reaches
+ROC-AUC $0.885\pm0.033$ and LightGBM $0.882\pm0.036$, both below every
+one of the three leading models on this metric, though still within a
+comparable range on accuracy and F1. All differences among the leading
+models are within one standard deviation of each other.
+Pooled out-of-fold point metrics, which aggregate every held-out
+prediction into a single estimate rather than averaging fold-wise, are
+reported in Table~\ref{tab:pooled} and agree with the fold-averaged
+values to within $0.003$ on every metric.
+The pooled out-of-fold ROC and precision--recall
+curves (Fig.~\ref{fig:rocpr}) confirm that all models operate in a
+high-AUC regime ($\approx 0.90$), which is expected on a small,
+near-balanced cohort and implies limited head-room for any single model.
+The GCN's errors are balanced across types,
+and its predicted-probability distribution is well separated by class
+(Fig.~\ref{fig:calib}, right). The calibration curve
+(Fig.~\ref{fig:calib}, left) indicates reasonable probability calibration
+after inner-validation threshold tuning.
+
+\input{../results/latex/combined_performance}
+
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{fig10_roc_pr.png}
+\caption{Pooled out-of-fold ROC (left) and precision--recall (right)
+curves. All models achieve comparable, high AUC, underscoring the
+performance ceiling of the cohort.}
+\label{fig:rocpr}
+\end{figure*}
+
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{fig28_calibration_probdist.png}
+\caption{Left: reliability (calibration) curve for the GCN. Right:
+distribution of predicted disease probabilities by true class,
+demonstrating clear separation.}
+\label{fig:calib}
+\end{figure*}
+
+\subsection{Statistical significance}
+Table~\ref{tab:stats} reports the significance tests, now extended to
+all four non-neural baselines. None of the eight tests (four
+comparisons $\times$ two test types) approaches the $0.05$ significance
+level after Holm correction across the family: McNemar's test on the
+pooled out-of-fold predictions gives $p=0.70$ against Logistic
+Regression, $p=0.77$ against Random Forest, $p=1.00$ against XGBoost and
+$p=0.66$ against LightGBM, and the Wilcoxon signed-rank test on per-fold
+F1 gives $p=0.25$, $p=0.51$, $p=0.60$ and $p=0.15$, respectively (Holm-adjusted
+$p\geq0.61$ throughout). We therefore characterise the GCN as
+\emph{statistically indistinguishable from} strong classical
+baselines---including modern gradient-boosted trees---not as a decisive
+improvement. This honest positioning is, in our view, more credible than
+an inflated accuracy claim and redirects the contribution toward
+representation and interpretability.
+
+\input{../results/latex/table_statistical_tests}
+
+\subsection{Comparison with the patient-similarity formulation}
+\label{sec:formulation}
+The premise of this work is that a feature-node graph is a more suitable
+inductive bias for clinical tabular data than the conventional
+patient-similarity graph. We test that premise directly.
+
+A $k$-sweep of the patient-similarity baseline identifies $k=15$ as its
+own best setting, which is used throughout.
+Table~\ref{tab:formulation} compares the two formulations under the
+identical protocol. The feature-node model is ahead on every metric---most
+clearly on ROC-AUC ($0.905\pm0.041$ versus $0.889\pm0.036$)---but the
+margin is modest. Per-seed DeLong tests on the pooled out-of-fold
+predictions (Table~\ref{tab:formstats}) give $p=0.351$, $0.910$ and
+$0.017$: the direction is consistent across all three seeds, yet the
+difference reaches significance in only one. \emph{In distribution we
+therefore claim parity with a consistent directional advantage, not a
+demonstrated win.}
+
+The more informative difference is structural. The patient-similarity
+model is transductive: before it can score any patient it requires a
+cohort-level graph, so it cannot classify an isolated individual. The
+feature-node model is inductive---each patient is an independent
+graph---and the topology learned on the development cohort transfers
+directly. Section~\ref{sec:external} shows that this distinction has
+practical consequences under distribution shift.
+
+\input{../results/latex/combined_patient}
+
+\subsection{Deployment characteristics}
+\label{sec:deploy}
+Because deployability is one of the three properties on which we rest the
+case for this formulation (\textbf{P2}), we measure it rather than assert
+it (Table~\ref{tab:deploy}).
+
+\textbf{Inductive single-patient inference.} We scored held-out patients
+strictly one at a time, constructing each patient's graph in isolation
+with no other patient present, and compared the result against batch
+scoring. The maximum absolute deviation over all patients was
+$3.0\times10^{-8}$, i.e.\ numerically identical: the model's output for a
+patient does not depend on which other patients are present. Mean latency
+was $2.56$\,ms per patient (median $2.43$\,ms, p95 $2.93$\,ms) on CPU. The
+patient-similarity baseline of Section~\ref{sec:formulation} admits no
+analogous measurement, because it cannot produce a prediction for an
+isolated patient at all.
+
+\textbf{Footprint.} The deployed model has $1{,}281$ trainable parameters
+and serialises to $11.4$\,KB; training completes in seconds and peak
+memory stays below $2$\,MB. Nothing in the
+pipeline requires a GPU.
+
+\textbf{Calibration.} Discrimination is not sufficient for a decision
+aid: predicted risks must also be calibrated. Table~\ref{tab:calib}
+reports Brier score and expected calibration error. Out-of-fold on
+Cleveland the GCN is the best-calibrated of the three models
+(Brier $0.124$, ECE $0.042$, against $0.124/0.047$ for Logistic
+Regression and $0.126/0.055$ for Random Forest). The more interesting
+behaviour appears under transport. Logistic Regression's calibration
+collapses on every external cohort (ECE $0.318$, $0.530$, $0.471$),
+whereas the GCN degrades far more gracefully on Hungarian
+(ECE $0.091$ versus $0.318$ and $0.209$)---a $3.5\times$ advantage over
+the linear baseline---and remains competitive with Random Forest on VA
+($0.195$ versus $0.169$). On Switzerland, whose disease prevalence is
+$93\%$, all three models are poorly calibrated and Random Forest is the
+least bad ($0.356$ versus $0.453$). Retaining calibration under
+distribution shift, not merely ranking ability, is in our view the most
+practically relevant transport result in this paper.
+
+\textbf{Clinical utility, and where it is absent.} Calibration and
+discrimination still do not establish that a model is worth using. We
+therefore computed decision curves, reporting net benefit
+$\mathrm{NB}=\mathrm{TP}/n-(\mathrm{FP}/n)\,p_t/(1-p_t)$ across
+clinically plausible risk thresholds against the default strategy of
+treating every patient.
+
+The outcome divides cleanly by cohort prevalence, and we report it
+without selection. On Hungarian, whose $36\%$ prevalence is clinically
+realistic, the GCN yields the highest net benefit at every threshold
+examined and exceeds treat-all by a widening margin as $p_t$ grows
+($0.220$ versus $0.085$ at $p_t=0.30$; $0.164$ versus $-0.281$ at
+$p_t=0.50$). On Switzerland ($93\%$ prevalence) and VA ($79\%$), by
+contrast, \emph{no} model improves on treating everyone: at $p_t=0.30$
+the GCN attains $0.687$ against treat-all's $0.902$ on Switzerland, and
+$0.631$ against $0.694$ on VA. We regard this as a property of those
+cohorts rather than of the model---when nearly every patient is diseased,
+the treat-all strategy is close to optimal by construction and any
+selective rule can only forgo true positives. It nevertheless bounds the
+claim we are entitled to make: \emph{demonstrated clinical utility rests
+on the single external cohort with a realistic prevalence}, and
+prospective evaluation in a screening population remains necessary.
+
+\input{../results/latex/table_deployment}
+\input{../results/latex/table_calibration}
+
+\subsection{Learned representation}
+Training is stable under early stopping, and
+Fig.~\ref{fig:embed} projects the learned graph-level embeddings with PCA
+and t-SNE. Disease and non-disease patients form largely separated
+clusters, indicating that the pooled representation captures
+class-discriminative structure despite the one-dimensional node features.
+
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{fig19_embeddings.png}
+\caption{PCA (left) and t-SNE (right) projections of the learned
+graph-level embeddings on the held-out test set. The two classes form
+largely separated clusters.}
+\label{fig:embed}
+\end{figure*}
+
+\subsection{Ablation study}
+\label{sec:ablation}
+Table~\ref{tab:ablation} presents the complete ablation; panel~(b)
+isolates the effect of each design choice. Four
+findings emerge.
+
+\emph{(i) Selective sparsity helps.} The fully connected graph is the
+weakest configuration (Table~\ref{tab:ablation}), confirming that
+indiscriminate connectivity injects noise and that a sparse,
+correlation-driven topology is preferable. This is the result that most
+directly justifies the graph-construction contribution.
+
+\emph{(ii) The MST aids connectivity, not accuracy.} Removing the MST
+bridges leaves predictive performance essentially unchanged. This row
+must be read with care, however: at $\tau=0.15$ the thresholded graph is
+already connected in every fold, so the MST adds no edges and the two
+conditions are in fact the \emph{same graph}
+(Table~\ref{tab:mstactivation}); the residual difference is
+run-to-run non-determinism rather than a component effect. The
+augmentation is tested properly in Section~\ref{sec:graph} at
+$\tau=0.20$, where it is active: there it restores a single connected
+component in $5/5$ folds without changing any metric significantly. We
+therefore present the MST as a \emph{structural} guarantee---validated by
+the positive Fiedler value of Fig.~\ref{fig:spectral}---rather than as a
+source of \emph{internal} accuracy gains. This ablation, like every other
+row in this table, is computed within the development cohort and is by
+construction blind to any effect that appears only under distribution
+shift; Section~\ref{sec:tauregime} examines the same topologies on
+external cohorts and finds an ordering that this table cannot see.
+
+\emph{(iii) Message passing and correlation structure give small,
+consistent benefits.} The correlation graph modestly outperforms an
+edge-count-matched random graph and the no-edge (independent-node)
+baseline, indicating that the specific feature-interaction topology, and
+not merely the presence of edges, carries useful signal.
+
+\emph{(iv) Two layers are preferable to one}, while the model is robust to
+readout choice, dropout and hidden width within one standard deviation
+(Table~\ref{tab:ablation}); this
+robustness is desirable
+for deployment because it reduces sensitivity to hyperparameter choices.
+
+\emph{(v) The choice of message-passing operator is not critical.}
+Because a natural objection to a GCN is that attention-based or more
+expressive operators might do better, we repeat the entire protocol with
+GAT, GraphSAGE and GIN substituted for GCNConv, holding graph
+construction, depth, width, readout, folds and seeds fixed
+(Table~\ref{tab:convs}). No operator differs significantly from GCN:
+DeLong $p\ge0.63$ and McNemar $p\ge0.057$ in every comparison
+(Table~\ref{tab:convstats}). GIN attains a nominally higher accuracy
+($0.824$ versus $0.811$), F1 and MCC, but the \emph{lowest} ROC-AUC of
+the four and requires $2.6\times$ the parameters ($3{,}393$ versus
+$1{,}281$); GAT and GraphSAGE fall between. On a thirteen-node feature
+graph the neighbourhood structure is evidently too limited for attention
+or sum-aggregation to exploit. We therefore retain GCN on grounds of
+\emph{parsimony}---it is the smallest model, attains the highest ROC-AUC,
+and is statistically indistinguishable from more expressive
+alternatives---rather than on grounds of superiority.
+
+\input{../results/latex/combined_ablation}
+\input{../results/latex/combined_conv}
+
+
+
+
+
+
+\subsection{Threshold sensitivity}
+\label{sec:threshold}
+Table~\ref{tab:threshold} reports performance
+as a function of the correlation threshold $\tau$ together with the
+resulting graph density. Performance is robust for $\tau\in[0.10,0.20]$;
+$\tau=0.15$ maximises ROC-AUC while retaining a connected, moderately
+sparse graph, which motivates our fixed choice. Very dense ($\tau=0.05$)
+and very sparse ($\tau=0.30$) graphs are both inferior, mirroring the
+topology ablation.
+
+\input{../results/latex/table_threshold_sensitivity}
+
+
+\subsection{Graph construction rule}
+\label{sec:construction}
+The proposed construction retains an edge when $|R_{ij}|\ge\tau$, a single
+\emph{global} cut-off. A natural alternative is a \emph{per-node} rule:
+$k$-nearest-neighbour construction links every feature to its $k$ most
+strongly correlated partners, fixing a minimum degree of $k$ so that a
+weakly correlated feature is never left near-isolated by the cut-off.
+Because this is the most direct objection to a threshold-based design, we
+test it rather than argue it.
+
+The two families also differ structurally. The
+global cut-off leaves at least one feature with degree $1$ in every fold,
+whereas $k$-NN guarantees degree $\ge k$ by construction; $k=4$ yields
+almost exactly the same number of edges as our graph ($34.6$ vs.\ $34.4$),
+making it a like-for-like control that isolates the \emph{rule} from the
+\emph{density}. Every $k$-NN graph is connected in every fold, so the MST
+is redundant under this rule.
+
+Table~\ref{tab:knn} reports predictive performance and
+Table~\ref{tab:knnstats} the paired Wilcoxon tests over the 15 matched
+folds. The Pearson+MST graph attains the highest ROC-AUC ($0.9051$ vs.\
+$0.8990$--$0.9036$) while the $k$-NN graphs are nominally stronger on F1
+and MCC. Because nine paired tests are performed over the same folds we
+control the family-wise error rate with the Holm--Bonferroni procedure:
+\emph{no comparison remains significant after correction} (smallest
+adjusted $p=0.163$), and the two nominally significant ROC-AUC
+differences ($p=0.018$ and $p=0.023$ uncorrected) do not survive.
+
+We therefore do not claim that the global cut-off predicts better. The
+finding is that performance is \emph{insensitive to the construction
+rule} on this cohort: a global threshold and an adaptive per-node rule of
+comparable density are statistically indistinguishable. We retain
+correlation thresholding with MST augmentation because it introduces no
+hyper-parameter beyond $\tau$, because its edge set is directly readable
+as a correlation structure, and because it admits the spectral
+interpretation used in Section~\ref{sec:graph}---not because it is more
+accurate.
+
+\input{../results/latex/combined_knn}
+
+\subsection{What message passing over scalar nodes contributes}
+\label{sec:mechanism}
+Each node carries a single scalar measurement, so it is fair to ask what
+propagation can add. Mechanically the answer is clear. The first graph
+convolution maps $\mathbb{R}^{1}\!\to\!\mathbb{R}^{d}$ per node and then
+averages over neighbours, so after one layer a feature's representation is
+no longer a function of its own measurement alone but of the measurements
+of the features it is correlated with. Maximum heart rate, for instance, is
+joined in \emph{every} fold to chest-pain type, exercise-induced angina, ST
+depression, slope, number of coloured vessels and thalassaemia; its embedding is therefore formed in the
+context of the exercise-ischaemia cluster rather than in isolation.
+Cholesterol, by contrast, retains only age as a fold-stable neighbour, and
+is contextualised correspondingly little.
+
+We are deliberately precise about how much this buys, because the scalar
+node dimension bounds it. Since the input dimension is one, the layer-1
+pre-activation of every node is a scalar multiple of the same weight
+vector: the node representation is \emph{rank-one in direction by
+construction}. Measured on the trained model, the participation-ratio
+effective rank of the $13\times32$ embedding matrix rises only to $1.63$
+after the first layer and $1.73$ after the second, against a possible $13$. The learned representation is thus close to a
+scalar score per feature, and the pooled graph-level function is
+correspondingly close to a linear function of graph-smoothed inputs. We
+regard this as explanatory rather than embarrassing: it is the mechanistic
+counterpart of the accuracy parity with logistic regression reported in
+Section~\ref{sec:results}, and it makes that parity an expected consequence
+of the design rather than a surprise. It is also why depth does not help
+here---propagation reduces the effective rank relative to processing the
+features independently ($1.73$ versus $2.22$), which is smoothing, not
+enrichment.
+
+The ablation supports this reading and no stronger reading. Under Holm
+correction over nine paired tests (Tables~\ref{tab:toposigperf}
+and~\ref{tab:toposig}), replacing the
+correlation graph with a \emph{random} graph of identical density
+significantly reduces ROC-AUC ($0.9051\to0.8959$, adjusted $p=0.005$): when
+propagation does occur, it matters that the edges encode genuine clinical
+correlation rather than arbitrary adjacency. But neither removing the graph
+entirely ($0.8966$, adjusted $p=0.249$) nor making it fully connected
+($0.8973$, adjusted $p=0.205$) differs significantly from our topology, and
+exchanging GCN for GAT, GraphSAGE or GIN changes no metric significantly
+either (Section~\ref{sec:ablation}). We therefore claim exactly what the
+evidence supports: \emph{the choice of topology matters more than the
+choice of operator, and a clinically meaningful topology is measurably
+better than an arbitrary one}---while explicitly not claiming that message
+passing over scalar nodes outperforms treating the features independently.
+The value of the formulation on this cohort lies in the structure it
+exposes and the explanations it supports, not in a predictive gain from
+propagation.
+
+\textbf{A falsification test.} The account above attributes the graph's
+contribution to \emph{smoothing} along correlated features rather than to
+relational reasoning over them. That distinction is testable. Relational
+reasoning requires the network to distinguish one feature from another,
+which the scalar encoding cannot do: with shared weights and
+permutation-equivariant aggregation, two features with similar values and
+similar degree are indistinguishable. Supplying that missing information
+should therefore help if the graph reasons relationally, and should
+interfere if it smooths. We repeated the full protocol with a learnable
+per-feature identity embedding concatenated to each node's scalar value
+($d=8$), holding graph construction, depth, width, readout, folds and
+seeds fixed (Table~\ref{tab:nodeid}).
+
+The embedding behaves exactly as the smoothing account predicts. Without
+edges it does what it was designed to do: effective rank rises from
+$1.01$ to $2.78$ and ROC-AUC improves to $0.9121$. With edges present the
+gain is undone---rank falls back to $1.63$ for Corr+MST and to $1.00$ for
+the fully connected graph, and ROC-AUC drops to $0.8237$ and $0.8347$
+respectively. The ordering is monotone in edge density: the more the
+graph mixes nodes, the less identity survives. Consequently the graph gap
+reverses sign under the identity encoding
+(Table~\ref{tab:nodeidgap}): $+0.0086$ with scalar nodes
+($11/15$ paired wins, $p=0.031$) becomes $-0.0884$ with identity
+embeddings. Message passing over feature nodes and explicit feature
+identity are in direct tension, and the formulation works because the
+node representation is a bare scalar with no identity to destroy. We
+report this as a negative result that constrains the interpretation: it
+rules out the relational reading that the feature-node framing might
+otherwise invite, and it identifies richer node features as a direction
+that is \emph{not} straightforwardly beneficial under this operator.
+
+\textbf{Does the reversal generalise beyond $d=8$?} The single dimension
+tested above could have been a coincidence of that particular embedding
+size. We repeated the identity-embedding experiment at
+$d\in\{0,2,4,8,16,32\}$, holding everything else fixed
+(Table~\ref{tab:nodeidsweep}). The sign reversal of the graph gap holds at
+\emph{every} tested dimension, not only $d=8$: $\Delta\mathrm{ROC\text{-}AUC}$
+(Corr+MST $-$ no graph) is $+0.0089$ at $d=0$ and becomes negative at
+$d=2$ ($-0.0060$), $d=4$ ($-0.0081$), $d=8$ ($-0.0882$), $d=16$
+($-0.0095$) and $d=32$ ($-0.0605$)
+(Table~\ref{tab:nodeidgapsweep}); none of the twelve
+(dimension, contrast) pairs survives Holm correction, consistent with
+the modest effect sizes already reported at $d=8$. The magnitude is not
+monotone in $d$: the reversal is small at $d=2$, $d=4$ and $d=16$ but
+sharply larger at $d=8$ and $d=32$, where the Corr+MST and fully
+connected conditions also become numerically unstable (standard
+deviation of ROC-AUC rising to $0.18$--$0.29$, versus $0.04$ at $d=0$).
+The effective rank confirms the same smoothing mechanism throughout the
+range: with no graph, rank rises monotonically with $d$ (from $1.01$ at
+$d=0$ to $5.57$ at $d=32$), whereas the fully connected graph collapses
+identity back to rank $1.00$ at \emph{every} tested dimension and
+Corr+MST sits in between, always closer to the fully connected value
+than to the no-graph value. The reversal is therefore not an artefact of
+one embedding size; it is a property of message passing over identity-augmented
+scalar nodes at any dimension we tested, which strengthens the
+mechanistic account above rather than merely illustrating it at a single
+point.
+
+\input{../results/latex/combined_nodeid}
+\input{../results/latex/table_node_identity_sweep}
+\input{../results/latex/table_node_identity_gap_sweep}
+\input{../results/latex/combined_toposig}
+
+\subsection{Explainability}
+\label{sec:xai}
+Table~\ref{tab:xai} compares
+three attribution methods across eight metrics. Integrated Gradients
+yields the most faithful and sparsest explanations---leading on
+fidelity, sparsity and both deletion and insertion area
+(Fig.~\ref{fig:delins})---while Saliency is the most stable but least
+faithful. The mean feature-importance profiles concentrate on \texttt{cp}, \texttt{oldpeak}, \texttt{thalach},
+\texttt{ca} and \texttt{thal}, in agreement with the clinical literature.
+
+Crucially, GNNExplainer and Integrated Gradients agree strongly
+(Table~\ref{tab:xai_agree}; Spearman
+$\rho=0.79$, top-$k$ Jaccard $0.56$). Because these two
+mechanistically different explainers converge on the same risk features,
+their agreement provides evidence of explanation reliability that a single
+method cannot offer. We therefore recommend GNNExplainer as the primary,
+graph-native explainer, corroborated by Integrated Gradients as an
+axiomatic cross-check. Saliency, whose raw gradients are noisier, is
+reported for completeness.
+
+\input{../results/latex/combined_xai}
+
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{xai_deletion_insertion.png}
+\caption{Deletion (left, lower is better) and insertion (right, higher is
+better) curves under most-relevant-first perturbation. Integrated
+Gradients produces the sharpest drop and fastest recovery.}
+\label{fig:delins}
+\end{figure*}
+
+
+
+
+\subsection{Error analysis}
+\label{sec:error}
+Fig.~\ref{fig:error} shows that misclassifications concentrate near the
+decision boundary: the model is rarely confidently wrong, which is
+desirable in a screening context where borderline cases can be flagged for
+clinician review. \begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{fig30_error_analysis.png}
+\caption{Error analysis. Correct predictions are confident, whereas
+misclassifications cluster around $P=0.5$, indicating calibrated
+uncertainty rather than confident errors.}
+\label{fig:error}
+\end{figure}
+
+
+\subsection{Cross-site transport within the UCI heart-disease collection}
+\label{sec:external}
+\textbf{Terminology and scope.} We refer to the Hungarian, Switzerland
+and Long-Beach-VA cohorts as \emph{external} to the Cleveland cohort on
+which every component is fit, and to this evaluation as external
+validation, in the narrow sense that no observation from these three
+cohorts is used at any stage of model development. We do not intend the
+stronger sense in which the term is sometimes used---validation on a
+cohort collected by an unrelated group, under an unrelated protocol, in
+an unrelated era. All four cohorts are constituent databases of the same
+UCI Heart Disease
+collection~\cite{uci_heart,detrano1989}, assembled by coordinated
+investigators using a shared variable
+definition and recruitment protocol in the late 1980s. Site, and to some
+degree the recruiting era, therefore differ across cohorts, but the
+broader clinical and measurement lineage does not, and the transport
+result below should be read as cross-site evaluation within one
+historical data collection rather than validation against an independent
+one.
+
+\textbf{Feature availability constrains what can be validated.} The
+primary 13-feature model cannot be transported: the non-Cleveland UCI
+cohorts systematically do not record \texttt{ca} (95--99\% missing),
+\texttt{thal} (42--90\%) or \texttt{slope} (14--65\%), and the Switzerland
+\texttt{chol} column is entirely zero-encoded, a documented sentinel
+rather than a measurement. Complete-case counts for the full feature
+vector are 1/294 (Hungarian), 0/123 (Switzerland) and 1/200 (VA), so
+external validation of the full model is impossible in principle, not
+merely inconvenient (Table~\ref{tab:extcohorts}). We therefore define a
+\emph{transportable} subset of the eight variables recorded in all four
+cohorts---\texttt{age}, \texttt{sex}, \texttt{cp}, \texttt{trestbps},
+\texttt{restecg}, \texttt{thalach}, \texttt{exang} and
+\texttt{oldpeak}---and retrain the identical architecture on Cleveland
+restricted to those features. Discarding \texttt{chol} and \texttt{fbs}
+costs little (target correlations $+0.085$ and $+0.025$), whereas
+discarding \texttt{ca} ($+0.460$), \texttt{thal} ($+0.516$) and
+\texttt{slope} ($+0.339$) is a genuine loss forced by data availability
+rather than chosen. That cost is visible internally: cross-validated
+ROC-AUC on Cleveland falls from $0.905\pm0.041$ (13 features) to
+$0.840\pm0.038$ (8 features, Table~\ref{tab:extref}), which separates the
+price of feature reduction from the price of cohort shift.
+
+\textbf{Protocol.} The scaler, the correlation+MST graph, the network
+weights and the decision threshold are all fit on Cleveland alone; each
+external cohort is scored exactly once, baselines are transported under
+the identical protocol, and the procedure is repeated over five seeds.
+
+\textbf{Result.} The feature-node GCN attains a higher ROC-AUC than both
+baselines on all three external cohorts (Hungarian $0.876\pm0.004$,
+Switzerland $0.744\pm0.008$, VA $0.721\pm0.007$), so the sign of the
+difference is positive in all six model--cohort comparisons
+(Table~\ref{tab:external}, Fig.~\ref{fig:extauc}). On Hungarian the
+transported AUC ($0.876$) exceeds the model's own internal Cleveland AUC
+on the same eight features ($0.840$); we note this but do not read it as
+superior transfer, since ROC-AUC is not comparable across cohorts of
+different case mix. This contrasts with the in-distribution result of
+Section~\ref{sec:results}, where the GCN was statistically
+indistinguishable from the same baselines, and suggests that the graph
+prior buys robustness to covariate and prevalence shift rather than
+in-distribution accuracy: restricting message passing to statistically
+related features appears to encode structure that is more stable across
+populations than the marginal decision surfaces the tabular baselines
+learn. Random Forest in particular degenerates toward majority-class
+prediction under shift, its specificity falling to $0.39$, $0.20$ and
+$0.11$ across the three cohorts, whereas the GCN retains a balanced
+operating point; Logistic Regression retains comparable specificity but at
+substantially lower AUC.
+
+\textbf{The patient-similarity formulation transports less reliably.} We
+transported the patient-similarity GNN of Section~\ref{sec:formulation}
+under the identical protocol, with $k$ fixed at the value selected on
+Cleveland and never re-tuned (Table~\ref{tab:patext}). The feature-node
+model attains the higher ROC-AUC on two of three cohorts---Hungarian
+($+0.011$) and VA ($+0.055$)---while Switzerland marginally favours the
+patient-similarity model ($-0.009$, Table~\ref{tab:formext}); we report
+that split result as it stands. The difference in \emph{failure mode} is
+nonetheless stark: on VA the patient-similarity model degenerated to a
+single-class predictor in all five seeds, labelling every patient diseased
+(recall $1.000\pm0.000$, specificity $0.000\pm0.000$, MCC
+$0.000\pm0.000$), and approached the same degeneracy on Switzerland
+(specificity $0.150$), whereas the feature-node model retained a usable
+operating point on both. Because the transductive model must rebuild its
+neighbourhood graph from the external cohort itself, a shifted covariate
+distribution reshapes the very structure over which messages pass; the
+feature-node model instead re-uses a fixed, Cleveland-derived feature
+topology unchanged.
+
+\textbf{Statistical support, honestly stated.} DeLong's test on the
+correlated ROC curves spans six comparisons (three cohorts $\times$ two
+baselines), so we judge it on Holm-adjusted $p$-values
+(Table~\ref{tab:extstats}). Only one survives correction: Logistic
+Regression on Hungarian ($\Delta\mathrm{AUC}=+0.169$, raw
+$p=5\times10^{-8}$, adjusted $p<10^{-4}$). The two comparisons nominally
+significant before correction---VA against Logistic Regression ($+0.162$,
+raw $p=0.022$) and Switzerland against Random Forest ($+0.126$, raw
+$p=0.020$)---do not survive (both adjusted $p=0.100$). These $p$-values
+must be read alongside the sampling uncertainty, which is severe on two
+cohorts: Switzerland contributes only eight negative cases and VA thirty,
+so a seed-to-seed standard deviation, which measures only initialisation
+variability, drastically understates the true uncertainty. We therefore
+computed a nested bootstrap ($B=2000$) resampling patients in a
+class-stratified manner \emph{and} drawing over the five fitted models
+(Table~\ref{tab:extboot}). The effect is large: the Switzerland AUC is
+$0.745$ with a $95\%$ interval of $[0.543,0.927]$---a width of $0.38$
+against a seed-only spread of $0.008$---so any conclusion from Switzerland
+alone is weakly supported irrespective of the point estimate. Paired
+bootstrap intervals for $\Delta$AUC (Table~\ref{tab:extbootdelta}) give
+the most conservative summary: the advantage over Logistic Regression is
+established on Hungarian ($+0.169$, $[+0.108,+0.231]$) and VA ($+0.151$,
+$[+0.020,+0.289]$), while every remaining comparison, including all three
+against Random Forest, has an interval containing zero. The Switzerland
+contrast against Random Forest, which DeLong marks significant, has a
+paired interval of $[-0.091,+0.215]$; with eight negative cases we regard
+the bootstrap as more reliable and do not claim that advantage. We
+therefore state the external finding as follows: the feature-node GCN is
+\emph{directionally superior in all six model--cohort comparisons}, its
+advantage over Logistic Regression is \emph{established on two of three
+cohorts}, and its advantage over Random Forest is \emph{not established on
+any}.
+
+\textbf{Caveats.} Prevalence shifts from $46\%$ to $93\%$ across cohorts,
+so threshold-dependent metrics are hard to interpret; Hungarian, with 292
+complete cases and a $36\%$ prevalence closest to Cleveland's, is the most
+trustworthy of the three and is also where the advantage is clearest.
+Complete-case filtering is not neutral for VA: $60$ of $200$ records
+($30.0\%$) are dropped and prevalence among retained cases ($78.6\%$) is
+$4.1$ percentage points higher than in the full cohort ($74.5\%$),
+indicating mild outcome-dependent missingness, whereas Hungarian and
+Switzerland show no comparable shift ($<0.5$\,pp,
+Table~\ref{tab:extcohorts}). No imputation is used at any stage, so this
+selection effect, not an imputation artefact, is the source of any
+residual bias on VA.
+
+\input{../results/latex/combined_patientext}
+\input{../results/latex/combined_extsetup}
+\input{../results/latex/combined_extresult}
+\input{../results/latex/combined_bootstrap}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{fig31_external_auc.png}
+\caption{External validation. Left: ROC-AUC by cohort for the transported
+models (mean$\pm$std over five seeds); the feature-node GCN leads on all
+three cohorts. Right: specificity under distribution shift; Random Forest
+degenerates toward majority-class prediction while the GCN retains a
+balanced operating point.}
+\label{fig:extauc}
+\end{figure*}
+
+\subsection{\texorpdfstring{$\tau$}{Tau}-regime analysis of graph
+connectivity}
+\label{sec:tauregime}
+The internal ablation found no benefit from the graph, and at our
+operating point the MST is inert; both could be read as evidence that the
+topology is decorative. We tested an alternative reading---that its
+contribution is transportability rather than in-distribution accuracy, and
+is therefore invisible to any internal experiment. Whether the MST acts at
+all depends jointly on the threshold and the feature set: the 13-feature
+graph stays connected for $\tau\le0.15$ and fragments from $\tau=0.20$,
+whereas the reduced 8-feature transportable set already fragments at
+$\tau=0.15$. This retrospectively explains the null ``w/o MST'' ablation
+row, because at $\tau=0.15$ on 13 features the two conditions describe the
+identical graph. Repeating the transport protocol of
+Section~\ref{sec:external} at $\tau=0.20$, where the MST is active, the
+internal and external orderings dissociate: internally the ranking is flat
+and slightly favours the edgeless model (validation ROC-AUC $0.8293$
+against $0.8276$), whereas externally Corr+MST attains the highest ROC-AUC
+on all three cohorts and the edgeless model falls to $0.6343$ on
+Switzerland against $0.7433$. Page's trend test for the ordered
+alternative is significant pooled ($L=406$, $p=1.4\times10^{-9}$ over $30$
+seed$\times$cohort blocks)~\cite{page1963}, and a fully connected graph,
+which is also a single component and therefore isolates selectivity from
+connectivity, is significantly worse than Corr+MST on all three cohorts
+($\Delta$AUC $+0.0117$ to $+0.0572$, all $p\le0.006$). What transports is
+thus a \emph{sparse, correlation-selective} topology that is also
+connected---not density, and not connectivity on its own. We bound the
+claim to what the evidence supports: these tests are computed over random
+initialisations, and under paired patient-level bootstrap only $3$ of $9$
+contrasts exclude zero, none surviving Holm correction of the DeLong
+tests, with modest effect sizes ($\Delta$AUC $+0.005$ to $+0.057$). We
+therefore describe this only as \emph{suggestive evidence} that a
+sparse, connected topology may be more favourable under distribution
+shift, consistent in direction across three cohorts and reproducibly
+across initialisations, with patient-level confidence established on the
+best-powered cohort alone. We do not claim that the MST improves prediction; internally it
+does not, and we retain it at $\tau=0.15$ as a connectivity safeguard, as
+stated in Section~\ref{sec:mst}. The complete tables for this analysis
+accompany the released code.
+
+\section{Discussion}
+We organise the discussion around the three properties set out in
+Section~\ref{sec:intro}, then state what the evidence does not support.
+
+\textbf{P1: Representation.} The feature-node graph turns an implicit
+modelling assumption into an explicit, inspectable object: the topology is
+available for spectral and centrality analysis \emph{before} any training
+occurs (Section~\ref{sec:graph}), so the structure a clinician is asked to
+trust can be examined independently of model fit---a property no tabular
+baseline offers. Downstream, three mechanistically distinct attribution
+methods converge on similar rankings (GNNExplainer and Integrated
+Gradients: Spearman $\rho=0.79$, top-$k$ Jaccard $0.56$) that align with
+established cardiovascular risk factors. Convergence across methods
+matters more than any single attribution: it indicates the explanation
+reflects the learned function rather than an artefact of one explainer.
+The errors that remain concentrate near the decision boundary
+(Section~\ref{sec:error}), which is the desirable failure profile for a
+decision aid that defers uncertain cases rather than one that fails
+confidently.
+
+\textbf{P2: Deployability.} Because each patient is an independent graph,
+inference is inductive by construction: the topology learned on the
+development cohort is applied unchanged, and a single patient can be
+scored with no cohort present. This is not a theoretical nicety. The
+conventional patient-similarity GNN we implement as a baseline must first
+construct a $k$-nearest-neighbour graph over whatever cohort it is asked
+to score (Section~\ref{sec:formulation}); it therefore cannot score an
+isolated referral at all, and its predictions for a given patient depend
+on which other patients happen to be present. The feature-node model
+carries none of that coupling: scoring patients individually reproduces
+batch predictions to $3\times10^{-8}$ at $2.6$\,ms each, from an
+$11.4$\,KB model (Section~\ref{sec:deploy}). It is also the best-calibrated
+model out-of-fold and the one whose calibration best survives transport at
+realistic prevalence---a property that matters more than discrimination
+for a tool intended to report risk rather than rank patients. Where it
+does \emph{not} yet earn its place is clinical utility on high-prevalence
+cohorts: on Switzerland and VA no model improves on treating every
+patient, so our demonstrated utility rests on Hungarian alone.
+
+\textbf{P3: Transportability.} Fitting every component on Cleveland and
+touching each external cohort once, the feature-node model attains the
+higher ROC-AUC in all six model--cohort comparisons, though paired
+bootstrap intervals establish this only against Logistic Regression and
+only on two cohorts (Section~\ref{sec:external}). The more robust signal
+is the difference in \emph{failure mode}: Random Forest drifts toward
+majority-class prediction under shift, its specificity falling to $0.39$,
+$0.20$ and $0.11$, and the patient-similarity GNN collapses entirely on
+VA, labelling every patient diseased, whereas the feature-node model
+retains a usable operating point throughout. We offer a mechanism: a model
+that must rebuild its graph from the target cohort inherits that cohort's
+distributional distortion into the very structure over which messages
+pass, whereas a fixed feature topology derived from the development cohort
+does not. That mechanism makes a testable prediction---degrading the
+topology should hurt transport while leaving in-distribution accuracy
+untouched---and Section~\ref{sec:tauregime} provides suggestive evidence
+consistent with it: a fully connected graph transports worse despite
+being equally connected, implicating \emph{selective} sparsity rather
+than connectivity alone. The effect is modest and, at the patient level,
+established only on the best-powered cohort, with no pairwise contrast
+surviving Holm correction of the DeLong tests; it is nonetheless the most
+direct evidence we have that the graph is doing work, and evidence no
+in-distribution experiment in this paper could have produced.
+
+\textbf{What the evidence does not support.} Two claims we might have
+made, and do not. First, accuracy: the model is statistically
+indistinguishable from all six classical baselines in-distribution,
+including the two modern gradient-boosted-tree models (XGBoost,
+LightGBM), and we report that parity as a finding rather than minimising
+it. Second, architecture: substituting GAT, GraphSAGE or GIN
+changes no metric significantly, so the contribution cannot be attributed
+to the convolution. What remains, and what the ablation localises, is the
+graph \emph{construction}---selective, correlation-derived sparsity, which
+outperforms both random and fully connected topologies of comparable size.
+More broadly, our results caution that on small, near-balanced clinical
+cohorts differences between well-tuned models are usually within noise;
+only a strictly shared protocol with significance testing distinguishes
+genuine improvement from favourable splitting, and reporting a model's
+non-superiority is often the more informative result.
+Table~\ref{tab:literature} positions our formulation against
+representative paradigms.
+
+\input{../results/latex/table_literature_comparison}
+
+\section{Limitations}
+\emph{(i)} The Cleveland cohort is small ($n=303$) and single-centre, and
+the near-ceiling AUC leaves little separation between models, so accuracy
+parity with strong baselines is expected. \emph{(ii)} Each node carries a
+single scalar feature, which provably limits the expressive advantage of
+message passing: the layer-1 node representation is rank-one in direction
+by construction and reaches an effective rank of only $1.73$ out of $13$
+after two layers (Section~\ref{sec:mechanism}). Consistent with this, the
+graph does not significantly outperform independent feature processing, so
+its principal value is representational and explanatory rather than
+predictive. The obvious remedy---richer node features---is not
+straightforward: a learnable per-feature identity embedding raises the
+effective rank only when the graph is removed, and with edges present
+message passing smooths the added identity away and degrades accuracy
+monotonically with edge density. Lifting this ceiling therefore requires
+an aggregation scheme that preserves node identity, not merely a wider
+node encoding, and we identify that as the open problem rather than a
+routine extension. \emph{(iii)} Pearson correlation captures only linear
+feature dependence and may miss nonlinear interactions;
+mutual-information or copula-based graphs are promising alternatives.
+\emph{(iv)} The MST guarantees connectivity but does not improve internal
+accuracy: at the operating threshold it adds no edges at all. Under
+distribution shift an MST-supported sparse topology is associated with
+better transport (Section~\ref{sec:tauregime}), but that evidence is
+limited---the effect is modest, established at the patient level only on
+the best-powered cohort, and no pairwise contrast survives correction for
+multiple comparisons---so we treat transportability as directionally
+supported rather than established. The construction rule is likewise not
+empirically decisive on this cohort: a global correlation cut-off and a
+per-node $k$-NN rule of comparable density are indistinguishable after
+correction (Section~\ref{sec:construction}), so our preference rests on
+parsimony and interpretability rather than measured performance.
+\emph{(v)} The feature graph is small (thirteen nodes), bounding the depth
+of useful message passing. \emph{(vi)} No temporal or longitudinal
+information is modelled. \emph{(vii)} Cross-site validation is necessarily
+restricted to an eight-feature model, because \texttt{ca}, \texttt{thal}
+and \texttt{slope} are not recorded in the other cohorts; the full
+13-feature model reported in Section~\ref{sec:results} therefore remains
+validated only internally. Moreover, the Hungarian, Switzerland and VA
+cohorts are not independent external data in the strongest sense: they
+are constituent databases of the same UCI Heart Disease
+collection~\cite{uci_heart,detrano1989} as Cleveland, sharing variable
+definitions and recruitment era, so this evaluation demonstrates
+cross-site robustness rather than validation against an unrelated
+population (Section~\ref{sec:external}). \emph{(viii)} Two of the three external cohorts
+are severely imbalanced (eight and thirty negative cases), so their
+estimates carry very wide uncertainty---the bootstrap $95\%$ interval for
+the Switzerland AUC spans $[0.543,0.927]$---and no comparison against
+Random Forest excludes zero; where DeLong's test and the bootstrap
+disagree we defer to the bootstrap, since asymptotic tests are unreliable
+with eight negative cases. \emph{(ix)} The advantage over the
+patient-similarity formulation is partial rather than uniform:
+in-distribution it reaches significance in only one of three seeds, and on
+transport that model attains a marginally higher AUC on Switzerland, so
+our claim rests on the difference in failure mode and on the
+inductive/transductive distinction, not on a uniform margin. \emph{(x)} We
+compared four message-passing operators but did not tune each one's
+hyperparameters separately. \emph{(xi)} Decision-curve analysis
+establishes net benefit over the treat-all strategy on Hungarian only; on
+Switzerland ($93\%$ prevalence) and VA ($79\%$) no model, ours included,
+improves on treating every patient, so our clinical-utility evidence rests
+on a single external cohort. \emph{(xii)} Calibration was assessed but not
+corrected; recalibration would likely improve the poorly calibrated
+external estimates.
+
+\section{Conclusion}
+When candidate models on a small clinical cohort are statistically tied on
+accuracy---as they are here---the decision between them should turn on
+representation, deployability and transportability, and we evaluated a
+feature-node graph formulation against exactly those criteria. The
+formulation converts a modelling assumption into an inspectable topology
+that is validated spectrally before training and explained by three
+concordant attribution methods; it is inductive by construction, scoring
+an isolated patient from an $11.4$\,KB, $1{,}281$-parameter model where
+the patient-similarity baseline cannot score such a patient at all; and it
+attains the higher ROC-AUC in all six external comparisons while retaining
+a usable operating point where the baselines drift toward majority-class
+prediction. We bound both claims honestly: the transport advantage is
+established only against Logistic Regression and only on two cohorts, and
+on accuracy we report a null result and decline to dress it otherwise.
+Substituting GAT, GraphSAGE or GIN changes no metric significantly, which
+localises whatever contribution exists to the graph construction rather
+than the operator. We hope the honest positioning and full reproducibility
+of this study serve as a useful template for evaluating graph-based models
+on small clinical datasets, where the temptation to report a fractional
+accuracy gain is strong and the evidence for it is usually absent. Future
+work will pursue richer node features, nonlinear dependence graphs,
+calibrated risk estimates, and prospective multi-centre validation on
+cohorts that record the full feature set.
+
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+
+%% ------------------------- SUBMISSION-TODO -------------------------
+%% IEEE Access requires a biography and photograph for every author.
+%% Supply a 1in x 1.25in portrait (JPEG/PNG) per author, place it in
+%% ../figures/, and replace the placeholder file name below. A biography
+%% typically states degrees (with field, institution and year), current
+%% position, research interests, and any IEEE membership grade.
+%% -------------------------------------------------------------------
+%% The photo is included only once it exists, so the manuscript builds
+%% before the portrait is supplied. Drop ../figures/author_photo.jpg in
+%% place and the framed photograph appears automatically.
+\newcommand{\authorbiotext}{%
+received the B.E. degree in computer science and engineering from
+Institution Name, City, Country, in 20xx, where they are currently
+pursuing the M.Tech. degree in artificial intelligence.
+
+Their research interests include graph representation learning,
+explainable artificial intelligence, and machine learning for clinical
+decision support.}
+
+\IfFileExists{../figures/author_photo.jpg}{%
+  \begin{IEEEbiography}[{\includegraphics[width=1in,height=1.25in,%
+  clip,keepaspectratio]{author_photo.jpg}}]{FIRST A. AUTHOR}
+  \authorbiotext
+  \end{IEEEbiography}}{%
+  \begin{IEEEbiographynophoto}{FIRST A. AUTHOR}
+  \authorbiotext
+  \end{IEEEbiographynophoto}}
+
+\end{document}

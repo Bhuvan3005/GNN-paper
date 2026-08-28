@@ -1,0 +1,19 @@
+\begin{table}[t]
+\centering
+\caption{Structure of the feature graph under a global correlation cut-off versus per-node $k$-NN construction (across the 5 folds).}
+\label{tab:knnstruct}
+\small
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{lrrr}
+\toprule
+Construction & Edges & Min degree & Connected folds \\
+\midrule
+Corr+MST, $\tau$=0.15 (Ours) & 34.4 $\pm$ 2.5 & 1 & 5/5 \\
+Corr only, $\tau$=0.15 & 34.4 $\pm$ 2.5 & 1 & 5/5 \\
+k-NN, k=2 & 18.4 $\pm$ 1.0 & 2 & 5/5 \\
+k-NN, k=3 & 26.8 $\pm$ 0.4 & 3 & 5/5 \\
+k-NN, k=4 & 34.6 $\pm$ 1.0 & 4 & 5/5 \\
+\bottomrule
+\end{tabular}
+}
+\end{table}

@@ -1,0 +1,7 @@
+Cohort,Comparison,AUC (GCN),AUC (other),ΔAUC,DeLong p,McNemar p,Holm p (DeLong),Sig. Holm (DeLong),Holm p (McNemar),Sig. Holm (McNemar)
+Hungarian,GCN vs Logistic Regression,0.8737,0.7046,0.1691,5.1e-08,1.4e-05,0.0,yes,0.0001,yes
+Hungarian,GCN vs Random Forest,0.8737,0.8402,0.0335,0.1459,4.72e-10,0.3801,no,0.0,yes
+Switzerland,GCN vs Logistic Regression,0.7407,0.5914,0.1493,0.3626,1.96e-05,0.3801,no,0.0001,yes
+Switzerland,GCN vs Random Forest,0.7407,0.6152,0.1256,0.02,1.3e-09,0.1,no,0.0,yes
+VA Long Beach,GCN vs Logistic Regression,0.7255,0.5636,0.1618,0.0219,0.2807,0.1,no,0.2807,no
+VA Long Beach,GCN vs Random Forest,0.7255,0.6385,0.087,0.1267,0.0489,0.3801,no,0.0978,no

@@ -1,0 +1,14 @@
+Feature,Type,Unique,Min,Max,Mean,Std,Missing
+age,continuous,41,29.0,77.0,54.439,9.039,0
+sex,categorical,2,0.0,1.0,0.68,0.467,0
+cp,categorical,4,0.0,3.0,2.158,0.96,0
+trestbps,continuous,50,94.0,200.0,131.69,17.6,0
+chol,continuous,152,126.0,564.0,246.693,51.777,0
+fbs,categorical,2,0.0,1.0,0.149,0.356,0
+restecg,categorical,3,0.0,2.0,0.99,0.995,0
+thalach,continuous,91,71.0,202.0,149.607,22.875,0
+exang,categorical,2,0.0,1.0,0.327,0.47,0
+oldpeak,continuous,40,0.0,6.2,1.04,1.161,0
+slope,categorical,3,0.0,2.0,0.601,0.616,0
+ca,categorical,4,0.0,3.0,0.663,0.934,0
+thal,categorical,3,1.0,3.0,1.832,0.957,0

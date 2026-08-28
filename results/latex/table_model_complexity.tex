@@ -1,0 +1,17 @@
+\begin{table*}[t]
+\centering
+\caption{Model complexity (trained once on the full cohort for reference; cross-validated models use the same architecture).}
+\label{tab:complexity}
+\footnotesize
+\begin{tabular}{lll}
+\toprule
+Model & Parameters & Notes \\
+\midrule
+GCN (Ours) & 1,281 & 13 nodes, 2 GCN layers, hidden=32 \\
+Logistic Regression & 14 & 13 coefficients + bias \\
+Random Forest & 31,408 & 300 trees (total node count) \\
+Gradient Boosting & 2,824 & 200 trees (total node count) \\
+MLP & 3,009 & Hidden layers (64, 32) \\
+\bottomrule
+\end{tabular}
+\end{table*}

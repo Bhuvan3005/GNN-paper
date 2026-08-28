@@ -1,0 +1,7 @@
+Comparison,ΔAUC (fold mean),Wilcoxon p,DeLong p (pooled OOF),Wins/n
+Corr+MST (Ours) vs Corr only (no MST),-0.0001,0.74805,0.512,6/10
+Corr+MST (Ours) vs Random graph,0.0074,0.00586,2.34e-09,9/10
+Corr+MST (Ours) vs Fully connected,0.0105,0.00195,0,10/10
+Corr+MST (Ours) vs No graph,0.0058,0.00195,1e-05,10/10
+Corr+MST (Ours) vs Logistic Regression,-0.0278,0.00195,0,0/10
+Corr+MST (Ours) vs Random Forest,-0.0111,0.00195,2.71e-09,0/10

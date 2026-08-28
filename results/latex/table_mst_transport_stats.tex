@@ -1,0 +1,23 @@
+\begin{table*}[t]
+\centering
+\caption{Pairwise contrasts against Corr+MST at $\tau=0.20$, with paired patient-level bootstrap intervals and Holm-adjusted DeLong tests.}
+\label{tab:msttransportstats}
+\footnotesize
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lrrrrrrrr}
+\toprule
+Cohort & Contrast & AUC Corr+MST & AUC other & $\Delta$AUC & 95\% CI (bootstrap) & CI excludes 0 & Holm p (DeLong) & Significant (Holm, DeLong) \\
+\midrule
+Hungarian & Corr+MST vs Corr only (disconnected) & 0.8728 & 0.8677 & 0.0051 & [+0.0023, +0.0153] & yes & 0.0807 & no \\
+Hungarian & Corr+MST vs No graph & 0.8728 & 0.8589 & 0.0138 & [-0.0023, +0.0417] & no & 0.6258 & no \\
+Hungarian & Corr+MST vs Fully connected & 0.8728 & 0.8611 & 0.0117 & [+0.0037, +0.0287] & yes & 0.1532 & no \\
+Switzerland & Corr+MST vs Corr only (disconnected) & 0.7433 & 0.7354 & 0.0079 & [-0.0231, +0.0417] & no & 1.0 & no \\
+Switzerland & Corr+MST vs No graph & 0.7433 & 0.6343 & 0.109 & [-0.0255, +0.2512] & no & 0.6975 & no \\
+Switzerland & Corr+MST vs Fully connected & 0.7433 & 0.7061 & 0.0372 & [-0.0602, +0.1551] & no & 1.0 & no \\
+VA Long Beach & Corr+MST vs Corr only (disconnected) & 0.7203 & 0.7004 & 0.0199 & [-0.0112, +0.0439] & no & 1.0 & no \\
+VA Long Beach & Corr+MST vs No graph & 0.7203 & 0.69 & 0.0303 & [-0.0206, +0.0824] & no & 1.0 & no \\
+VA Long Beach & Corr+MST vs Fully connected & 0.7203 & 0.6631 & 0.0572 & [+0.0079, +0.1073] & yes & 0.1653 & no \\
+\bottomrule
+\end{tabular}
+}
+\end{table*}

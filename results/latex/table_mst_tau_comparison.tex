@@ -1,0 +1,18 @@
+\begin{table*}[t]
+\centering
+\caption{Correlation graph with and without MST augmentation, at a threshold where the MST is inert ($\tau=0.15$) and one where it is active ($\tau=0.20$).}
+\label{tab:msttau}
+\footnotesize
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lrrrrrr}
+\toprule
+Configuration & Accuracy & F1 & ROC-AUC & MCC & Recall & Specificity \\
+\midrule
+Corr only, $\tau$=0.15 & 0.8032 $\pm$ 0.0787 & 0.7936 $\pm$ 0.0692 & 0.9027 $\pm$ 0.0437 & 0.6164 $\pm$ 0.1468 & 0.8105 $\pm$ 0.0825 & 0.7974 $\pm$ 0.1464 \\
+Corr+MST, $\tau$=0.15 & 0.8109 $\pm$ 0.0652 & 0.7971 $\pm$ 0.0597 & 0.9051 $\pm$ 0.0413 & 0.6280 $\pm$ 0.1240 & 0.8011 $\pm$ 0.0748 & 0.8196 $\pm$ 0.1208 \\
+Corr only, $\tau$=0.20 & 0.8218 $\pm$ 0.0583 & 0.7988 $\pm$ 0.0725 & 0.9008 $\pm$ 0.0406 & 0.6445 $\pm$ 0.1160 & 0.7841 $\pm$ 0.1068 & 0.8537 $\pm$ 0.0648 \\
+Corr+MST, $\tau$=0.20 & 0.8076 $\pm$ 0.0770 & 0.7979 $\pm$ 0.0705 & 0.9035 $\pm$ 0.0426 & 0.6241 $\pm$ 0.1425 & 0.8175 $\pm$ 0.0856 & 0.7992 $\pm$ 0.1382 \\
+\bottomrule
+\end{tabular}
+}
+\end{table*}

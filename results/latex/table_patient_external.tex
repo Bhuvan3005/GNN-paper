@@ -1,0 +1,17 @@
+\begin{table*}[t]
+\centering
+\caption{External transport of the conventional patient-similarity GNN (mean $\pm$ std over 5 seeds).}
+\label{tab:patext}
+\footnotesize
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lrrrrrrrrr}
+\toprule
+Cohort & Model & n & Accuracy & Precision & Recall & F1 & ROC-AUC & MCC & Specificity \\
+\midrule
+Hungarian & Patient-similarity GNN (k=15) & 292 & 0.7486 $\pm$ 0.0749 & 0.6312 $\pm$ 0.0911 & 0.8343 $\pm$ 0.0891 & 0.7093 $\pm$ 0.0493 & 0.8648 $\pm$ 0.0175 & 0.5277 $\pm$ 0.0893 & 0.7005 $\pm$ 0.1501 \\
+Switzerland & Patient-similarity GNN (k=15) & 116 & 0.9103 $\pm$ 0.0372 & 0.9399 $\pm$ 0.0145 & 0.9667 $\pm$ 0.0579 & 0.9517 $\pm$ 0.0227 & 0.7537 $\pm$ 0.0693 & 0.0968 $\pm$ 0.1269 & 0.1500 $\pm$ 0.2424 \\
+VA Long Beach & Patient-similarity GNN (k=15) & 140 & 0.7857 $\pm$ 0.0000 & 0.7857 $\pm$ 0.0000 & 1.0000 $\pm$ 0.0000 & 0.8800 $\pm$ 0.0000 & 0.6662 $\pm$ 0.0397 & 0.0000 $\pm$ 0.0000 & 0.0000 $\pm$ 0.0000 \\
+\bottomrule
+\end{tabular}
+}
+\end{table*}

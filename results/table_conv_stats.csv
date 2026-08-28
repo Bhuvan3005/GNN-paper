@@ -1,0 +1,4 @@
+Comparison,Mean ΔAUC (GCN−other),DeLong p (median),McNemar p (median),Holm p (DeLong (median)),Sig. Holm (DeLong (median)),Holm p (McNemar (median)),Sig. Holm (McNemar (median))
+GCN vs GAT,0.0027,0.7192,0.05737,1.0,no,0.1721,no
+GCN vs GraphSAGE,-0.0027,0.819,0.146,1.0,no,0.292,no
+GCN vs GIN,0.001,0.6314,0.2632,1.0,no,0.292,no

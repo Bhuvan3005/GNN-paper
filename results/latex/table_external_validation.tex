@@ -1,0 +1,23 @@
+\begin{table*}[t]
+\centering
+\caption{External validation of the transported 8-feature models (mean $\pm$ std over 5 seeds). Scaler, graph, weights and decision threshold are fit on Cleveland only.}
+\label{tab:external}
+\footnotesize
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lrrrrrrr}
+\toprule
+Cohort & Model & n & Recall & F1 & ROC-AUC & MCC & Specificity \\
+\midrule
+Hungarian & GCN (Ours) & 292 & 0.6629 $\pm$ 0.0712 & 0.7080 $\pm$ 0.0195 & 0.8755 $\pm$ 0.0037 & 0.5715 $\pm$ 0.0075 & 0.8845 $\pm$ 0.0456 \\
+Hungarian & Logistic Regression & 292 & 0.3810 $\pm$ 0.1927 & 0.4361 $\pm$ 0.1069 & 0.7060 $\pm$ 0.0025 & 0.2817 $\pm$ 0.0324 & 0.8492 $\pm$ 0.1262 \\
+Hungarian & Random Forest & 292 & 0.9219 $\pm$ 0.0904 & 0.6201 $\pm$ 0.0461 & 0.8413 $\pm$ 0.0059 & 0.3536 $\pm$ 0.0940 & 0.3904 $\pm$ 0.2096 \\
+Switzerland & GCN (Ours) & 116 & 0.5907 $\pm$ 0.0773 & 0.7286 $\pm$ 0.0628 & 0.7444 $\pm$ 0.0083 & 0.1384 $\pm$ 0.0482 & 0.6750 $\pm$ 0.0612 \\
+Switzerland & Logistic Regression & 116 & 0.4556 $\pm$ 0.1819 & 0.5944 $\pm$ 0.1720 & 0.6287 $\pm$ 0.0195 & 0.0828 $\pm$ 0.0273 & 0.7000 $\pm$ 0.1696 \\
+Switzerland & Random Forest & 116 & 0.8852 $\pm$ 0.1374 & 0.9042 $\pm$ 0.0751 & 0.6748 $\pm$ 0.0724 & 0.0315 $\pm$ 0.1200 & 0.2000 $\pm$ 0.3410 \\
+VA Long Beach & GCN (Ours) & 140 & 0.7545 $\pm$ 0.0551 & 0.7994 $\pm$ 0.0229 & 0.7211 $\pm$ 0.0068 & 0.2451 $\pm$ 0.0700 & 0.5200 $\pm$ 0.1343 \\
+VA Long Beach & Logistic Regression & 140 & 0.5309 $\pm$ 0.2310 & 0.6091 $\pm$ 0.1767 & 0.5697 $\pm$ 0.0055 & 0.0545 $\pm$ 0.0120 & 0.5267 $\pm$ 0.2332 \\
+VA Long Beach & Random Forest & 140 & 0.9436 $\pm$ 0.1082 & 0.8606 $\pm$ 0.0420 & 0.6676 $\pm$ 0.0198 & 0.1160 $\pm$ 0.0661 & 0.1133 $\pm$ 0.1771 \\
+\bottomrule
+\end{tabular}
+}
+\end{table*}

@@ -1,0 +1,32 @@
+\begin{table*}[t]
+\centering
+\caption{Node-identity falsification test. Panel (a) reports performance and effective rank under each node encoding; panel (b) reports the internal graph gap paired over the 15 matched runs.}
+\label{tab:nodeid}
+\label{tab:nodeidgap}
+\footnotesize
+\textbf{(a) Performance and effective rank}\\[2pt]
+\begin{tabular}{lrrrr}
+\toprule
+Node encoding & Topology & Effective rank (conv1) & ROC-AUC & MCC \\
+\midrule
+Scalar node (current) & No graph & 1.01 & 0.8966 $\pm$ 0.0485 & 0.6262 $\pm$ 0.1276 \\
+Scalar node (current) & Corr+MST & 1.0 & 0.9051 $\pm$ 0.0413 & 0.6280 $\pm$ 0.1240 \\
+Scalar node (current) & Fully connected & 1.0 & 0.8973 $\pm$ 0.0432 & 0.6107 $\pm$ 0.1428 \\
++ Identity embedding (d=8) & No graph & 2.78 & 0.9121 $\pm$ 0.0399 & 0.6623 $\pm$ 0.1120 \\
++ Identity embedding (d=8) & Corr+MST & 1.63 & 0.8237 $\pm$ 0.2296 & 0.5561 $\pm$ 0.2482 \\
++ Identity embedding (d=8) & Fully connected & 1.0 & 0.8347 $\pm$ 0.1991 & 0.5305 $\pm$ 0.2459 \\
+\bottomrule
+\end{tabular}
+\vspace{7pt}
+\textbf{(b) Paired internal graph gap}\\[2pt]
+\begin{tabular}{lrrrr}
+\toprule
+Node encoding & Contrast & $\Delta$ROC-AUC & Wilcoxon p (15 paired folds) & Wins / 15 \\
+\midrule
+Scalar node (current) & Corr+MST $-$ No graph & 0.0086 & 0.0309 & 11 \\
+Scalar node (current) & Corr+MST $-$ Fully connected & 0.0078 & 0.0256 & 11 \\
++ Identity embedding (d=8) & Corr+MST $-$ No graph & -0.0884 & 0.0833 & 6 \\
++ Identity embedding (d=8) & Corr+MST $-$ Fully connected & -0.011 & 0.4431 & 10 \\
+\bottomrule
+\end{tabular}
+\end{table*}

@@ -1,0 +1,21 @@
+\begin{table*}[t]
+\centering
+\caption{Paired Wilcoxon tests, Holm-corrected over nine hypotheses, isolating what the graph topology contributes.}
+\label{tab:toposig}
+\footnotesize
+\begin{tabular}{lrrrrrrr}
+\toprule
+Comparison & Metric & Ours & Other & $\Delta$ (Ours$-$Other) & Wilcoxon p & Holm p & Significant (Holm) \\
+\midrule
+Corr+MST (Ours) vs No graph & F1 & 0.7971 & 0.7916 & 0.0055 & 0.6292 & 1.0 & no \\
+Corr+MST (Ours) vs No graph & ROC-AUC & 0.9051 & 0.8966 & 0.0085 & 0.0356 & 0.2492 & no \\
+Corr+MST (Ours) vs No graph & MCC & 0.628 & 0.6262 & 0.0018 & 0.4887 & 1.0 & no \\
+Corr+MST (Ours) vs Fully connected & F1 & 0.7971 & 0.792 & 0.0051 & 0.8904 & 1.0 & no \\
+Corr+MST (Ours) vs Fully connected & ROC-AUC & 0.9051 & 0.8973 & 0.0077 & 0.0256 & 0.2048 & no \\
+Corr+MST (Ours) vs Fully connected & MCC & 0.628 & 0.6107 & 0.0173 & 0.5995 & 1.0 & no \\
+Corr+MST (Ours) vs Random graph & F1 & 0.7971 & 0.7896 & 0.0075 & 0.6002 & 1.0 & no \\
+Corr+MST (Ours) vs Random graph & ROC-AUC & 0.9051 & 0.8959 & 0.0092 & 0.0006 & 0.0054 & yes \\
+Corr+MST (Ours) vs Random graph & MCC & 0.628 & 0.6056 & 0.0223 & 0.1961 & 1.0 & no \\
+\bottomrule
+\end{tabular}
+\end{table*}

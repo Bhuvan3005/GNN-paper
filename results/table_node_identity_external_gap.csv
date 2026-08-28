@@ -1,0 +1,25 @@
+Operator,Node encoding,Contrast,Cohort,ΔROC-AUC,Wins / 5,Wilcoxon p
+GCN,Scalar node (current),Corr+MST − No graph,Hungarian,0.0162,5,0.0625
+GCN,Scalar node (current),Corr+MST − No graph,Switzerland,0.1081,5,0.0625
+GCN,Scalar node (current),Corr+MST − No graph,VA Long Beach,0.0298,5,0.0625
+GCN,Scalar node (current),Corr+MST − Fully connected,Hungarian,0.0142,5,0.0625
+GCN,Scalar node (current),Corr+MST − Fully connected,Switzerland,0.0382,5,0.0625
+GCN,Scalar node (current),Corr+MST − Fully connected,VA Long Beach,0.0574,5,0.0625
+GCN,+ Identity embedding (d=8),Corr+MST − No graph,Hungarian,-0.0141,0,0.0625
+GCN,+ Identity embedding (d=8),Corr+MST − No graph,Switzerland,-0.0134,1,0.1875
+GCN,+ Identity embedding (d=8),Corr+MST − No graph,VA Long Beach,-0.0106,0,0.0625
+GCN,+ Identity embedding (d=8),Corr+MST − Fully connected,Hungarian,0.0112,5,0.0625
+GCN,+ Identity embedding (d=8),Corr+MST − Fully connected,Switzerland,0.0218,4,0.125
+GCN,+ Identity embedding (d=8),Corr+MST − Fully connected,VA Long Beach,0.0685,5,0.0625
+SAGE,Scalar node (current),Corr+MST − No graph,Hungarian,0.0231,5,0.0625
+SAGE,Scalar node (current),Corr+MST − No graph,Switzerland,0.0681,5,0.0625
+SAGE,Scalar node (current),Corr+MST − No graph,VA Long Beach,0.047,5,0.0625
+SAGE,Scalar node (current),Corr+MST − Fully connected,Hungarian,0.0287,5,0.0625
+SAGE,Scalar node (current),Corr+MST − Fully connected,Switzerland,0.0583,4,0.125
+SAGE,Scalar node (current),Corr+MST − Fully connected,VA Long Beach,0.0639,5,0.0625
+SAGE,+ Identity embedding (d=8),Corr+MST − No graph,Hungarian,-0.003,0,0.125
+SAGE,+ Identity embedding (d=8),Corr+MST − No graph,Switzerland,-0.0266,0,0.125
+SAGE,+ Identity embedding (d=8),Corr+MST − No graph,VA Long Beach,-0.0006,2,1.0
+SAGE,+ Identity embedding (d=8),Corr+MST − Fully connected,Hungarian,0.0069,5,0.0625
+SAGE,+ Identity embedding (d=8),Corr+MST − Fully connected,Switzerland,-0.0065,3,0.875
+SAGE,+ Identity embedding (d=8),Corr+MST − Fully connected,VA Long Beach,0.0199,5,0.0625

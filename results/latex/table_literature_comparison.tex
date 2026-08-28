@@ -1,0 +1,15 @@
+\begin{table*}[t]
+\centering
+\caption{Qualitative comparison with representative paradigms.}
+\label{tab:literature}
+\footnotesize
+\begin{tabular}{p{2.6cm}p{2.0cm}p{3.0cm}p{1.6cm}p{3.0cm}}
+\toprule
+Paradigm & Reported accuracy regime & Explainability & Inference mode & Interpretability notes \\
+\midrule
+Classical tabular ML~\cite{mohan2019hybrid,latha2019ensemble} & High & None (post-hoc only) & N/A & Transparent at coefficient/importance level \\
+Patient-similarity GNN~\cite{parisot2018disease} & Moderate--High & Node/edge masks on the population graph & Transductive & Explains via cohort neighbours, not features \\
+Feature-node GCN (Ours) & Comparable to classical ML & GNNExplainer + Integrated Gradients + Saliency (8 metrics) & Inductive & Exposes feature-level interaction structure \\
+\bottomrule
+\end{tabular}
+\end{table*}

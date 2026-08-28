@@ -1,0 +1,28 @@
+\begin{table*}[t]
+\centering
+\caption{External transport by graph topology at $\tau=0.20$ (mean $\pm$ std over 10 seeds). Internal and external orderings dissociate.}
+\label{tab:msttransport}
+\footnotesize
+\begin{tabular}{lrrrrrr}
+\toprule
+Topology & Setting & n & Components & ROC-AUC & F1 & MCC \\
+\midrule
+Corr+MST (connected) & Cleveland (internal val) & --- & 1.0 & 0.8276 $\pm$ 0.0616 & --- & --- \\
+Corr+MST (connected) & Hungarian & 292 & 1.0 & 0.8728 $\pm$ 0.0067 & 0.7117 $\pm$ 0.0218 & 0.5726 $\pm$ 0.0090 \\
+Corr+MST (connected) & Switzerland & 116 & 1.0 & 0.7433 $\pm$ 0.0083 & 0.7586 $\pm$ 0.0703 & 0.1660 $\pm$ 0.0571 \\
+Corr+MST (connected) & VA Long Beach & 140 & 1.0 & 0.7203 $\pm$ 0.0066 & 0.8097 $\pm$ 0.0297 & 0.2271 $\pm$ 0.0460 \\
+Corr only (disconnected) & Cleveland (internal val) & --- & 2.8 & 0.8143 $\pm$ 0.0578 & --- & --- \\
+Corr only (disconnected) & Hungarian & 292 & 2.8 & 0.8677 $\pm$ 0.0044 & 0.6701 $\pm$ 0.0705 & 0.5416 $\pm$ 0.0472 \\
+Corr only (disconnected) & Switzerland & 116 & 2.8 & 0.7354 $\pm$ 0.0179 & 0.6876 $\pm$ 0.0933 & 0.1268 $\pm$ 0.0431 \\
+Corr only (disconnected) & VA Long Beach & 140 & 2.8 & 0.7004 $\pm$ 0.0188 & 0.7897 $\pm$ 0.0356 & 0.2051 $\pm$ 0.0686 \\
+No graph & Cleveland (internal val) & --- & 8.0 & 0.8293 $\pm$ 0.0656 & --- & --- \\
+No graph & Hungarian & 292 & 8.0 & 0.8589 $\pm$ 0.0053 & 0.6442 $\pm$ 0.0636 & 0.5166 $\pm$ 0.0387 \\
+No graph & Switzerland & 116 & 8.0 & 0.6343 $\pm$ 0.0225 & 0.6436 $\pm$ 0.1155 & 0.0559 $\pm$ 0.0407 \\
+No graph & VA Long Beach & 140 & 8.0 & 0.6900 $\pm$ 0.0041 & 0.8037 $\pm$ 0.0448 & 0.2107 $\pm$ 0.0200 \\
+Fully connected & Cleveland (internal val) & --- & 1.0 & 0.8164 $\pm$ 0.0610 & --- & --- \\
+Fully connected & Hungarian & 292 & 1.0 & 0.8611 $\pm$ 0.0011 & 0.5787 $\pm$ 0.1551 & 0.4746 $\pm$ 0.1064 \\
+Fully connected & Switzerland & 116 & 1.0 & 0.7061 $\pm$ 0.0003 & 0.6251 $\pm$ 0.1899 & 0.1279 $\pm$ 0.0915 \\
+Fully connected & VA Long Beach & 140 & 1.0 & 0.6631 $\pm$ 0.0011 & 0.7716 $\pm$ 0.0647 & 0.1542 $\pm$ 0.0578 \\
+\bottomrule
+\end{tabular}
+\end{table*}

@@ -1,0 +1,35 @@
+\begin{table*}[t]
+\centering
+\caption{Topology significance. Panel (a) reports performance by topology; panel (b) reports the paired contrasts with multiplicity control.}
+\label{tab:toposigperf}
+\label{tab:toposig}
+\footnotesize
+\textbf{(a) Performance by topology}\\[2pt]
+\begin{tabular}{lrrrr}
+\toprule
+Topology & Accuracy & F1 & ROC-AUC & MCC \\
+\midrule
+Corr+MST (Ours) & 0.8109 $\pm$ 0.0652 & 0.7971 $\pm$ 0.0597 & 0.9051 $\pm$ 0.0413 & 0.6280 $\pm$ 0.1240 \\
+No graph & 0.8086 $\pm$ 0.0661 & 0.7916 $\pm$ 0.0685 & 0.8966 $\pm$ 0.0485 & 0.6262 $\pm$ 0.1276 \\
+Fully connected & 0.8021 $\pm$ 0.0753 & 0.7920 $\pm$ 0.0729 & 0.8973 $\pm$ 0.0432 & 0.6107 $\pm$ 0.1428 \\
+Random graph & 0.7955 $\pm$ 0.0614 & 0.7896 $\pm$ 0.0545 & 0.8959 $\pm$ 0.0414 & 0.6056 $\pm$ 0.1115 \\
+\bottomrule
+\end{tabular}
+\vspace{7pt}
+\textbf{(b) Paired contrasts}\\[2pt]
+\begin{tabular}{lrrrrrrr}
+\toprule
+Comparison & Metric & Ours & Other & $\Delta$ (Ours$-$Other) & Wilcoxon p & Holm p & Significant (Holm) \\
+\midrule
+Corr+MST (Ours) vs No graph & F1 & 0.7971 & 0.7916 & 0.0055 & 0.6292 & 1.0 & no \\
+Corr+MST (Ours) vs No graph & ROC-AUC & 0.9051 & 0.8966 & 0.0085 & 0.0356 & 0.2492 & no \\
+Corr+MST (Ours) vs No graph & MCC & 0.628 & 0.6262 & 0.0018 & 0.4887 & 1.0 & no \\
+Corr+MST (Ours) vs Fully connected & F1 & 0.7971 & 0.792 & 0.0051 & 0.8904 & 1.0 & no \\
+Corr+MST (Ours) vs Fully connected & ROC-AUC & 0.9051 & 0.8973 & 0.0077 & 0.0256 & 0.2048 & no \\
+Corr+MST (Ours) vs Fully connected & MCC & 0.628 & 0.6107 & 0.0173 & 0.5995 & 1.0 & no \\
+Corr+MST (Ours) vs Random graph & F1 & 0.7971 & 0.7896 & 0.0075 & 0.6002 & 1.0 & no \\
+Corr+MST (Ours) vs Random graph & ROC-AUC & 0.9051 & 0.8959 & 0.0092 & 0.0006 & 0.0054 & yes \\
+Corr+MST (Ours) vs Random graph & MCC & 0.628 & 0.6056 & 0.0223 & 0.1961 & 1.0 & no \\
+\bottomrule
+\end{tabular}
+\end{table*}

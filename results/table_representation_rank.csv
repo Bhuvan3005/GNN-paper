@@ -1,0 +1,7 @@
+Topology,Stage,Effective rank (mean ± std),Max possible
+Corr+MST (Ours),conv1 (pre BN/ReLU),1.00 ± 0.00,13
+Corr+MST (Ours),layer 1 (BN+ReLU),1.63 ± 0.41,13
+Corr+MST (Ours),layer 2,1.73 ± 0.62,13
+No graph,conv1 (pre BN/ReLU),1.01 ± 0.00,13
+No graph,layer 1 (BN+ReLU),1.93 ± 0.23,13
+No graph,layer 2,2.22 ± 0.24,13

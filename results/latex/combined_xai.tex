@@ -1,0 +1,33 @@
+\begin{table*}[t]
+\centering
+\caption{Explainability evaluation. Panel (a) compares the three attribution methods across the quantitative metrics; panel (b) reports cross-method agreement.}
+\label{tab:xai}
+\label{tab:xai_agree}
+\footnotesize
+\textbf{(a) Attribution-method metrics}\\[2pt]
+\begin{tabular}{lrrr}
+\toprule
+Metric & GNNExplainer & Integrated Gradients & Saliency \\
+\midrule
+Fidelity+ & 0.5037 & 0.5208 & 0.4461 \\
+Fidelity- & 0.7384 & 0.8093 & 0.6203 \\
+Sparsity & 0.5154 & 0.7404 & 0.3462 \\
+Stability & 0.961 & 0.9991 & 0.9997 \\
+Sensitivity($\downarrow$) & 0.039 & 0.0009 & 0.0003 \\
+Deletion-AUC($\downarrow$) & 0.1172 & 0.0961 & 0.1453 \\
+Insertion-AUC & 0.3645 & 0.3988 & 0.3232 \\
+Clinical-Agreement & 0.56 & 0.615 & 0.755 \\
+\bottomrule
+\end{tabular}
+\vspace{7pt}
+\textbf{(b) Cross-method agreement}\\[2pt]
+\begin{tabular}{lrr}
+\toprule
+Method pair & Top-k Jaccard & Spearman rank corr \\
+\midrule
+GNNExplainer vs Integrated Gradients & 0.5587 & 0.7883 \\
+GNNExplainer vs Saliency & 0.3185 & 0.2695 \\
+Integrated Gradients vs Saliency & 0.3636 & 0.3729 \\
+\bottomrule
+\end{tabular}
+\end{table*}

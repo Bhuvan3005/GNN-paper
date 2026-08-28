@@ -1,0 +1,24 @@
+\begin{table*}[t]
+\centering
+\caption{Calibration of predicted risks. Brier score and expected calibration error (ECE, 10 bins), out-of-fold on Cleveland and on each external cohort. Lower is better.}
+\label{tab:calib}
+\footnotesize
+\begin{tabular}{lrrr}
+\toprule
+Setting & Model & Brier & ECE \\
+\midrule
+Cleveland (OOF) & GCN (Ours) & 0.1238 $\pm$ 0.0023 & 0.0421 $\pm$ 0.0090 \\
+Cleveland (OOF) & Logistic Regression & 0.1243 $\pm$ 0.0033 & 0.0467 $\pm$ 0.0031 \\
+Cleveland (OOF) & Random Forest & 0.1262 $\pm$ 0.0014 & 0.0546 $\pm$ 0.0061 \\
+Hungarian & GCN (Ours) & 0.1416 $\pm$ 0.0059 & 0.0907 $\pm$ 0.0105 \\
+Hungarian & Logistic Regression & 0.3153 $\pm$ 0.0116 & 0.3181 $\pm$ 0.0136 \\
+Hungarian & Random Forest & 0.1969 $\pm$ 0.0069 & 0.2086 $\pm$ 0.0030 \\
+Switzerland & GCN (Ours) & 0.2975 $\pm$ 0.0343 & 0.4526 $\pm$ 0.0340 \\
+Switzerland & Logistic Regression & 0.5279 $\pm$ 0.2047 & 0.5301 $\pm$ 0.2056 \\
+Switzerland & Random Forest & 0.1944 $\pm$ 0.0182 & 0.3560 $\pm$ 0.0220 \\
+VA Long Beach & GCN (Ours) & 0.2054 $\pm$ 0.0085 & 0.1952 $\pm$ 0.0115 \\
+VA Long Beach & Logistic Regression & 0.4686 $\pm$ 0.1730 & 0.4709 $\pm$ 0.1728 \\
+VA Long Beach & Random Forest & 0.1857 $\pm$ 0.0021 & 0.1693 $\pm$ 0.0120 \\
+\bottomrule
+\end{tabular}
+\end{table*}

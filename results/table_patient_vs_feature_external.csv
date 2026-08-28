@@ -1,0 +1,4 @@
+Cohort,AUC feature-node,AUC patient-sim,ΔAUC
+Hungarian,0.8755,0.8648,0.0107
+Switzerland,0.7444,0.7537,-0.0093
+VA Long Beach,0.7211,0.6662,0.0549

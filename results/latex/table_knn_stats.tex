@@ -1,0 +1,21 @@
+\begin{table*}[t]
+\centering
+\caption{Paired Wilcoxon signed-rank tests over the 15 matched folds comparing $k$-NN construction against the Pearson+MST graph.}
+\label{tab:knnstats}
+\footnotesize
+\begin{tabular}{lrrrrrrr}
+\toprule
+Comparison & Metric & Mean A & Mean B & $\Delta$ (A$-$B) & Wilcoxon p & Holm p & Significant (Holm) \\
+\midrule
+Corr+MST, $\tau$=0.15 (Ours) vs k-NN, k=2 & F1 & 0.7971 & 0.8076 & -0.0105 & 0.1981 & 1.0 & no \\
+Corr+MST, $\tau$=0.15 (Ours) vs k-NN, k=2 & ROC-AUC & 0.9051 & 0.899 & 0.0061 & 0.0181 & 0.1629 & no \\
+Corr+MST, $\tau$=0.15 (Ours) vs k-NN, k=2 & MCC & 0.628 & 0.6429 & -0.0149 & 0.5098 & 1.0 & no \\
+Corr+MST, $\tau$=0.15 (Ours) vs k-NN, k=3 & F1 & 0.7971 & 0.8021 & -0.005 & 0.2209 & 1.0 & no \\
+Corr+MST, $\tau$=0.15 (Ours) vs k-NN, k=3 & ROC-AUC & 0.9051 & 0.9015 & 0.0036 & 0.023 & 0.184 & no \\
+Corr+MST, $\tau$=0.15 (Ours) vs k-NN, k=3 & MCC & 0.628 & 0.618 & 0.01 & 0.5098 & 1.0 & no \\
+Corr+MST, $\tau$=0.15 (Ours) vs k-NN, k=4 & F1 & 0.7971 & 0.8023 & -0.0052 & 0.6496 & 1.0 & no \\
+Corr+MST, $\tau$=0.15 (Ours) vs k-NN, k=4 & ROC-AUC & 0.9051 & 0.9036 & 0.0015 & 0.4698 & 1.0 & no \\
+Corr+MST, $\tau$=0.15 (Ours) vs k-NN, k=4 & MCC & 0.628 & 0.6363 & -0.0083 & 0.9721 & 1.0 & no \\
+\bottomrule
+\end{tabular}
+\end{table*}

@@ -1,0 +1,9 @@
+Metric,GNNExplainer,Integrated Gradients,Saliency
+Fidelity+,0.5037,0.5208,0.4461
+Fidelity-,0.7384,0.8093,0.6203
+Sparsity,0.5154,0.7404,0.3462
+Stability,0.961,0.9991,0.9997
+Sensitivity(↓),0.039,0.0009,0.0003
+Deletion-AUC(↓),0.1172,0.0961,0.1453
+Insertion-AUC,0.3645,0.3988,0.3232
+Clinical-Agreement,0.56,0.615,0.755

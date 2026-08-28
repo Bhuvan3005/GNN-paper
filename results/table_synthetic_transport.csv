@@ -1,0 +1,7 @@
+Model,External AUC
+Corr+MST (Ours),0.8863 ± 0.0000
+Corr only (no MST),0.8772 ± 0.0015
+No graph,0.8675 ± 0.0016
+Fully connected,0.8608 ± 0.0000
+Logistic Regression,0.8842 ± 0.0004
+Random Forest,0.9121 ± 0.0006

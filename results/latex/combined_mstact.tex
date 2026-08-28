@@ -1,0 +1,33 @@
+\begin{table*}[t]
+\centering
+\caption{MST activation on the 13-feature graph. Panel (a) reports where the thresholded graph fragments; panel (b) reports the resulting connectivity.}
+\label{tab:mstactivation}
+\label{tab:mstconn}
+\footnotesize
+\textbf{(a) Fragmentation by $\tau$}\\[2pt]
+\begin{tabular}{lrrrr}
+\toprule
+$\tau$ & Threshold-graph edges & After MST & MST bridges added & Connected before MST \\
+\midrule
+0.05 & 59.6 & 59.6 & 0.0 & 5/5 \\
+0.1 & 47.2 & 47.2 & 0.0 & 5/5 \\
+0.15 & 34.4 & 34.4 & 0.0 & 5/5 \\
+0.2 & 23.6 & 25.4 & 1.8 & 0/5 \\
+0.25 & 17.2 & 20.8 & 3.6 & 0/5 \\
+0.3 & 13.4 & 17.2 & 3.8 & 0/5 \\
+0.4 & 2.4 & 12.0 & 9.6 & 0/5 \\
+\bottomrule
+\end{tabular}
+\vspace{7pt}
+\textbf{(b) Resulting connectivity}\\[2pt]
+\begin{tabular}{lrrr}
+\toprule
+Configuration & Edges & Components & Connected folds \\
+\midrule
+Corr only, $\tau$=0.15 & 34.4 $\pm$ 2.5 & 1.0 & 5/5 \\
+Corr+MST, $\tau$=0.15 & 34.4 $\pm$ 2.5 & 1.0 & 5/5 \\
+Corr only, $\tau$=0.20 & 23.6 $\pm$ 1.0 & 2.8 & 0/5 \\
+Corr+MST, $\tau$=0.20 & 25.4 $\pm$ 1.0 & 1.0 & 5/5 \\
+\bottomrule
+\end{tabular}
+\end{table*}

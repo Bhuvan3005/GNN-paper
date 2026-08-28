@@ -1,0 +1,18 @@
+\begin{table*}[t]
+\centering
+\caption{Ablation over the message-passing operator. Graph construction, depth, width, readout and protocol are held fixed; only the convolution varies.}
+\label{tab:convs}
+\footnotesize
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lrrrrrrrr}
+\toprule
+Operator & Params & Accuracy & Precision & Recall & F1 & ROC-AUC & MCC & Specificity \\
+\midrule
+GCN (Ours) & 1281 & 0.8109 $\pm$ 0.0652 & 0.8044 $\pm$ 0.0999 & 0.8011 $\pm$ 0.0748 & 0.7971 $\pm$ 0.0597 & 0.9051 $\pm$ 0.0413 & 0.6280 $\pm$ 0.1240 & 0.8196 $\pm$ 0.1208 \\
+GAT & 1409 & 0.8109 $\pm$ 0.0718 & 0.8031 $\pm$ 0.1074 & 0.8058 $\pm$ 0.0759 & 0.7987 $\pm$ 0.0668 & 0.9022 $\pm$ 0.0426 & 0.6290 $\pm$ 0.1359 & 0.8154 $\pm$ 0.1303 \\
+GraphSAGE & 2337 & 0.8174 $\pm$ 0.0636 & 0.8039 $\pm$ 0.0872 & 0.8131 $\pm$ 0.0739 & 0.8045 $\pm$ 0.0611 & 0.9034 $\pm$ 0.0407 & 0.6390 $\pm$ 0.1220 & 0.8214 $\pm$ 0.1041 \\
+GIN & 3393 & 0.8240 $\pm$ 0.0708 & 0.8025 $\pm$ 0.0888 & 0.8322 $\pm$ 0.0650 & 0.8146 $\pm$ 0.0667 & 0.9008 $\pm$ 0.0418 & 0.6514 $\pm$ 0.1355 & 0.8171 $\pm$ 0.1068 \\
+\bottomrule
+\end{tabular}
+}
+\end{table*}

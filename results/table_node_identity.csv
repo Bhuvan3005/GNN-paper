@@ -1,0 +1,7 @@
+Node encoding,Topology,Effective rank (conv1),ROC-AUC,F1,MCC,Accuracy
+Scalar node (current),No graph,1.01,0.8966 ± 0.0485,0.7916 ± 0.0685,0.6262 ± 0.1276,0.8086 ± 0.0661
+Scalar node (current),Corr+MST,1.0,0.9051 ± 0.0413,0.7971 ± 0.0597,0.6280 ± 0.1240,0.8109 ± 0.0652
+Scalar node (current),Fully connected,1.0,0.8973 ± 0.0432,0.7920 ± 0.0729,0.6107 ± 0.1428,0.8021 ± 0.0753
++ Identity embedding (d=8),No graph,2.78,0.9121 ± 0.0399,0.8159 ± 0.0568,0.6623 ± 0.1120,0.8295 ± 0.0585
++ Identity embedding (d=8),Corr+MST,1.63,0.8237 ± 0.2296,0.7864 ± 0.0832,0.5561 ± 0.2482,0.7712 ± 0.1360
++ Identity embedding (d=8),Fully connected,1.0,0.8347 ± 0.1991,0.7733 ± 0.0834,0.5305 ± 0.2459,0.7548 ± 0.1366

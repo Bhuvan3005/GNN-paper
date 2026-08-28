@@ -1,0 +1,6 @@
+tau,Components before MST,Isolated nodes,MST bridges added,Connected before MST,MST status
+0.1,1.0,0.0,0.0,5/5,inert
+0.15,2.2,1.2,1.2,0/5,active
+0.2,2.8,1.8,1.8,0/5,active
+0.25,3.2,2.2,2.2,0/5,active
+0.3,3.8,2.8,2.8,0/5,active

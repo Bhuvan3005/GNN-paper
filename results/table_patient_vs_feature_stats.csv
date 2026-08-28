@@ -1,0 +1,4 @@
+Seed,AUC (feature-node),AUC (patient-sim),ΔAUC,b,c,McNemar p,DeLong p,Multiplicity
+42,0.9033,0.8909,0.0124,22,21,1.0,0.3506,per-seed replicate (no correction)
+7,0.8915,0.8903,0.0012,20,17,0.7423,0.9097,per-seed replicate (no correction)
+123,0.9005,0.8726,0.0279,11,23,0.0592,0.01708,per-seed replicate (no correction)

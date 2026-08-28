@@ -1,0 +1,18 @@
+\begin{table*}[t]
+\centering
+\caption{Paired tests for the MST augmentation. Where the MST is active it restores connectivity without changing any metric significantly.}
+\label{tab:msttaustats}
+\footnotesize
+\begin{tabular}{lrrrrrrr}
+\toprule
+Comparison & Metric & Mean A & Mean B & $\Delta$ (B$-$A) & Wilcoxon p & Holm p & Significant (Holm) \\
+\midrule
+Corr only, $\tau$=0.15 vs Corr+MST, $\tau$=0.15 & F1 & 0.7936 & 0.7971 & 0.0035 & 0.4652 & 1.0 & no \\
+Corr only, $\tau$=0.15 vs Corr+MST, $\tau$=0.15 & ROC-AUC & 0.9027 & 0.9051 & 0.0023 & 0.0431 & 0.2586 & no \\
+Corr only, $\tau$=0.15 vs Corr+MST, $\tau$=0.15 & MCC & 0.6164 & 0.628 & 0.0116 & 0.4652 & 1.0 & no \\
+Corr only, $\tau$=0.20 vs Corr+MST, $\tau$=0.20 & F1 & 0.7988 & 0.7979 & -0.0009 & 1.0 & 1.0 & no \\
+Corr only, $\tau$=0.20 vs Corr+MST, $\tau$=0.20 & ROC-AUC & 0.9008 & 0.9035 & 0.0027 & 0.2094 & 1.0 & no \\
+Corr only, $\tau$=0.20 vs Corr+MST, $\tau$=0.20 & MCC & 0.6445 & 0.6241 & -0.0205 & 0.5754 & 1.0 & no \\
+\bottomrule
+\end{tabular}
+\end{table*}

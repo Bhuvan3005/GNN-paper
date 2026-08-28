@@ -1,0 +1,5 @@
+Node encoding,Contrast,ΔROC-AUC,Wilcoxon p (15 paired folds),Wins / 15
+Scalar node (current),Corr+MST − No graph,0.0086,0.0309,11
+Scalar node (current),Corr+MST − Fully connected,0.0078,0.0256,11
++ Identity embedding (d=8),Corr+MST − No graph,-0.0884,0.0833,6
++ Identity embedding (d=8),Corr+MST − Fully connected,-0.011,0.4431,10

@@ -1,0 +1,121 @@
+Cohort,Model,Threshold,Net benefit
+Hungarian,GCN (Ours),0.05,0.3259
+Hungarian,GCN (Ours),0.1,0.293
+Hungarian,GCN (Ours),0.15,0.2824
+Hungarian,GCN (Ours),0.2,0.2791
+Hungarian,GCN (Ours),0.25,0.2397
+Hungarian,GCN (Ours),0.3,0.2197
+Hungarian,GCN (Ours),0.35,0.2065
+Hungarian,GCN (Ours),0.4,0.1918
+Hungarian,GCN (Ours),0.45,0.1821
+Hungarian,GCN (Ours),0.5,0.1644
+Hungarian,Logistic Regression,0.05,0.2606
+Hungarian,Logistic Regression,0.1,0.2424
+Hungarian,Logistic Regression,0.15,0.2224
+Hungarian,Logistic Regression,0.2,0.2046
+Hungarian,Logistic Regression,0.25,0.1872
+Hungarian,Logistic Regression,0.3,0.1659
+Hungarian,Logistic Regression,0.35,0.083
+Hungarian,Logistic Regression,0.4,0.0742
+Hungarian,Logistic Regression,0.45,0.0638
+Hungarian,Logistic Regression,0.5,0.0514
+Hungarian,Random Forest,0.05,0.3259
+Hungarian,Random Forest,0.1,0.2884
+Hungarian,Random Forest,0.15,0.2466
+Hungarian,Random Forest,0.2,0.1995
+Hungarian,Random Forest,0.25,0.1461
+Hungarian,Random Forest,0.3,0.1287
+Hungarian,Random Forest,0.35,0.0709
+Hungarian,Random Forest,0.4,0.0354
+Hungarian,Random Forest,0.45,-0.019
+Hungarian,Random Forest,0.5,0.1404
+Hungarian,Treat all,0.05,0.3259
+Hungarian,Treat all,0.1,0.2884
+Hungarian,Treat all,0.15,0.2466
+Hungarian,Treat all,0.2,0.1995
+Hungarian,Treat all,0.25,0.1461
+Hungarian,Treat all,0.3,0.0851
+Hungarian,Treat all,0.35,0.0148
+Hungarian,Treat all,0.4,-0.0674
+Hungarian,Treat all,0.45,-0.1644
+Hungarian,Treat all,0.5,-0.2808
+Switzerland,GCN (Ours),0.05,0.9274
+Switzerland,GCN (Ours),0.1,0.9061
+Switzerland,GCN (Ours),0.15,0.8758
+Switzerland,GCN (Ours),0.2,0.8297
+Switzerland,GCN (Ours),0.25,0.7586
+Switzerland,GCN (Ours),0.3,0.6872
+Switzerland,GCN (Ours),0.35,0.5895
+Switzerland,GCN (Ours),0.4,0.569
+Switzerland,GCN (Ours),0.45,0.5031
+Switzerland,GCN (Ours),0.5,0.4483
+Switzerland,Logistic Regression,0.05,0.696
+Switzerland,Logistic Regression,0.1,0.6935
+Switzerland,Logistic Regression,0.15,0.6907
+Switzerland,Logistic Regression,0.2,0.6875
+Switzerland,Logistic Regression,0.25,0.6839
+Switzerland,Logistic Regression,0.3,0.6798
+Switzerland,Logistic Regression,0.35,0.4131
+Switzerland,Logistic Regression,0.4,0.4023
+Switzerland,Logistic Regression,0.45,0.3997
+Switzerland,Logistic Regression,0.5,0.3879
+Switzerland,Random Forest,0.05,0.9274
+Switzerland,Random Forest,0.1,0.9234
+Switzerland,Random Forest,0.15,0.9189
+Switzerland,Random Forest,0.2,0.9138
+Switzerland,Random Forest,0.25,0.908
+Switzerland,Random Forest,0.3,0.8929
+Switzerland,Random Forest,0.35,0.8767
+Switzerland,Random Forest,0.4,0.8678
+Switzerland,Random Forest,0.45,0.8229
+Switzerland,Random Forest,0.5,0.75
+Switzerland,Treat all,0.05,0.9274
+Switzerland,Treat all,0.1,0.9234
+Switzerland,Treat all,0.15,0.9189
+Switzerland,Treat all,0.2,0.9138
+Switzerland,Treat all,0.25,0.908
+Switzerland,Treat all,0.3,0.9015
+Switzerland,Treat all,0.35,0.8939
+Switzerland,Treat all,0.4,0.8851
+Switzerland,Treat all,0.45,0.8746
+Switzerland,Treat all,0.5,0.8621
+VA Long Beach,GCN (Ours),0.05,0.7744
+VA Long Beach,GCN (Ours),0.1,0.7619
+VA Long Beach,GCN (Ours),0.15,0.7277
+VA Long Beach,GCN (Ours),0.2,0.6911
+VA Long Beach,GCN (Ours),0.25,0.6524
+VA Long Beach,GCN (Ours),0.3,0.6306
+VA Long Beach,GCN (Ours),0.35,0.5808
+VA Long Beach,GCN (Ours),0.4,0.519
+VA Long Beach,GCN (Ours),0.45,0.474
+VA Long Beach,GCN (Ours),0.5,0.4571
+VA Long Beach,Logistic Regression,0.05,0.7117
+VA Long Beach,Logistic Regression,0.1,0.7008
+VA Long Beach,Logistic Regression,0.15,0.6815
+VA Long Beach,Logistic Regression,0.2,0.6679
+VA Long Beach,Logistic Regression,0.25,0.6452
+VA Long Beach,Logistic Regression,0.3,0.6235
+VA Long Beach,Logistic Regression,0.35,0.339
+VA Long Beach,Logistic Regression,0.4,0.3262
+VA Long Beach,Logistic Regression,0.45,0.3169
+VA Long Beach,Logistic Regression,0.5,0.3
+VA Long Beach,Random Forest,0.05,0.7744
+VA Long Beach,Random Forest,0.1,0.7619
+VA Long Beach,Random Forest,0.15,0.7479
+VA Long Beach,Random Forest,0.2,0.7321
+VA Long Beach,Random Forest,0.25,0.7143
+VA Long Beach,Random Forest,0.3,0.6939
+VA Long Beach,Random Forest,0.35,0.6742
+VA Long Beach,Random Forest,0.4,0.6476
+VA Long Beach,Random Forest,0.45,0.6162
+VA Long Beach,Random Forest,0.5,0.5286
+VA Long Beach,Treat all,0.05,0.7744
+VA Long Beach,Treat all,0.1,0.7619
+VA Long Beach,Treat all,0.15,0.7479
+VA Long Beach,Treat all,0.2,0.7321
+VA Long Beach,Treat all,0.25,0.7143
+VA Long Beach,Treat all,0.3,0.6939
+VA Long Beach,Treat all,0.35,0.6703
+VA Long Beach,Treat all,0.4,0.6429
+VA Long Beach,Treat all,0.45,0.6104
+VA Long Beach,Treat all,0.5,0.5714

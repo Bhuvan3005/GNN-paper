@@ -1,0 +1,5 @@
+Cohort,AUC no-graph,AUC corr-only,AUC corr+MST,Monotone seeds,Page L,Page p
+Hungarian,0.8589,0.8677,0.8728,8/10,136.0,8.122e-05
+Switzerland,0.6343,0.7354,0.7433,6/10,136.0,8.122e-05
+VA Long Beach,0.6900,0.7004,0.7203,4/10,134.0,0.0007365
+POOLED (all cohorts),0.7277,0.7678,0.7788,18/30,406.0,1.438e-09

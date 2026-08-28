@@ -1,0 +1,4 @@
+Method pair,Top-k Jaccard,Spearman rank corr
+GNNExplainer vs Integrated Gradients,0.5587,0.7883
+GNNExplainer vs Saliency,0.3185,0.2695
+Integrated Gradients vs Saliency,0.3636,0.3729

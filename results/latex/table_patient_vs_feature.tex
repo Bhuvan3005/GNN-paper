@@ -1,0 +1,16 @@
+\begin{table*}[t]
+\centering
+\caption{Feature-node versus patient-similarity graph formulation under the identical cross-validation protocol.}
+\label{tab:formulation}
+\footnotesize
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lrrrrrrr}
+\toprule
+Formulation & Accuracy & Precision & Recall & F1 & ROC-AUC & MCC & Specificity \\
+\midrule
+Feature-node graph (Ours) & 0.8109 $\pm$ 0.0652 & 0.8044 $\pm$ 0.0999 & 0.8011 $\pm$ 0.0748 & 0.7971 $\pm$ 0.0597 & 0.9051 $\pm$ 0.0413 & 0.6280 $\pm$ 0.1240 & 0.8196 $\pm$ 0.1208 \\
+Patient-similarity graph (k=15) & 0.8021 $\pm$ 0.0467 & 0.7791 $\pm$ 0.0963 & 0.8275 $\pm$ 0.0970 & 0.7931 $\pm$ 0.0447 & 0.8891 $\pm$ 0.0358 & 0.6184 $\pm$ 0.0895 & 0.7807 $\pm$ 0.1163 \\
+\bottomrule
+\end{tabular}
+}
+\end{table*}

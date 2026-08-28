@@ -1,0 +1,15 @@
+\begin{table*}[t]
+\centering
+\caption{Selectivity control. A fully connected graph is also a single component, isolating selectivity from connectivity.}
+\label{tab:mstselect}
+\footnotesize
+\begin{tabular}{lrrrr}
+\toprule
+Cohort & AUC Corr+MST & AUC Fully connected & $\Delta$AUC & Wilcoxon p (seeds) \\
+\midrule
+Hungarian & 0.8728 & 0.8611 & 0.0117 & 0.005859 \\
+Switzerland & 0.7433 & 0.7061 & 0.0372 & 0.001953 \\
+VA Long Beach & 0.7203 & 0.6631 & 0.0572 & 0.001953 \\
+\bottomrule
+\end{tabular}
+\end{table*}

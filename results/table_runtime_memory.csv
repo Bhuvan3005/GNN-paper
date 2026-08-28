@@ -1,0 +1,6 @@
+Model,Train+eval time (s),Time / fold (s),Peak memory (MB)
+GCN (Ours),27.64,5.53,1.86
+Logistic Regression,1.54,0.31,0.28
+Random Forest,13.23,2.65,0.74
+Gradient Boosting,3.95,0.79,0.33
+MLP,6.13,1.23,0.72

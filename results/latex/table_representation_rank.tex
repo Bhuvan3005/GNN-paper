@@ -1,0 +1,20 @@
+\begin{table}[t]
+\centering
+\caption{Participation-ratio effective rank of the $13\times32$ node-embedding matrix on the trained model (mean $\pm$ std over test patients). With one scalar per node the layer-1 pre-activation is rank-one in direction by construction.}
+\label{tab:rank}
+\small
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{lrr}
+\toprule
+Topology & Stage & Effective rank (mean $\pm$ std) \\
+\midrule
+Corr+MST (Ours) & conv1 (pre BN/ReLU) & 1.00 $\pm$ 0.00 \\
+Corr+MST (Ours) & layer 1 (BN+ReLU) & 1.63 $\pm$ 0.41 \\
+Corr+MST (Ours) & layer 2 & 1.73 $\pm$ 0.62 \\
+No graph & conv1 (pre BN/ReLU) & 1.01 $\pm$ 0.00 \\
+No graph & layer 1 (BN+ReLU) & 1.93 $\pm$ 0.23 \\
+No graph & layer 2 & 2.22 $\pm$ 0.24 \\
+\bottomrule
+\end{tabular}
+}
+\end{table}

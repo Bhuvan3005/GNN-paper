@@ -1,0 +1,7 @@
+Comparison,Regime,Metric,Mean A,Mean B,Δ (B−A),Wilcoxon p,Holm p,Significant (Holm)
+"Corr only, τ=0.15 vs Corr+MST, τ=0.15",MST inert (identical graphs) — sanity check,F1,0.7936,0.7971,0.0035,0.4652,1.0,no
+"Corr only, τ=0.15 vs Corr+MST, τ=0.15",MST inert (identical graphs) — sanity check,ROC-AUC,0.9027,0.9051,0.0023,0.0431,0.2586,no
+"Corr only, τ=0.15 vs Corr+MST, τ=0.15",MST inert (identical graphs) — sanity check,MCC,0.6164,0.628,0.0116,0.4652,1.0,no
+"Corr only, τ=0.20 vs Corr+MST, τ=0.20",MST active (+1.8 bridges) — the real test,F1,0.7988,0.7979,-0.0009,1.0,1.0,no
+"Corr only, τ=0.20 vs Corr+MST, τ=0.20",MST active (+1.8 bridges) — the real test,ROC-AUC,0.9008,0.9035,0.0027,0.2094,1.0,no
+"Corr only, τ=0.20 vs Corr+MST, τ=0.20",MST active (+1.8 bridges) — the real test,MCC,0.6445,0.6241,-0.0205,0.5754,1.0,no

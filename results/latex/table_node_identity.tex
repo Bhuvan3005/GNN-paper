@@ -1,0 +1,18 @@
+\begin{table*}[t]
+\centering
+\caption{Node-identity falsification test. Adding a learnable per-feature embedding raises the effective rank only when the graph is removed; with edges present, message passing smooths the injected identity away and accuracy falls. Mean $\pm$ std over 3 seeds $\times$ 5 folds.}
+\label{tab:nodeid}
+\footnotesize
+\begin{tabular}{lrrrr}
+\toprule
+Node encoding & Topology & Effective rank (conv1) & ROC-AUC & MCC \\
+\midrule
+Scalar node (current) & No graph & 1.01 & 0.8966 $\pm$ 0.0485 & 0.6262 $\pm$ 0.1276 \\
+Scalar node (current) & Corr+MST & 1.0 & 0.9051 $\pm$ 0.0413 & 0.6280 $\pm$ 0.1240 \\
+Scalar node (current) & Fully connected & 1.0 & 0.8973 $\pm$ 0.0432 & 0.6107 $\pm$ 0.1428 \\
++ Identity embedding (d=8) & No graph & 2.78 & 0.9121 $\pm$ 0.0399 & 0.6623 $\pm$ 0.1120 \\
++ Identity embedding (d=8) & Corr+MST & 1.63 & 0.8237 $\pm$ 0.2296 & 0.5561 $\pm$ 0.2482 \\
++ Identity embedding (d=8) & Fully connected & 1.0 & 0.8347 $\pm$ 0.1991 & 0.5305 $\pm$ 0.2459 \\
+\bottomrule
+\end{tabular}
+\end{table*}

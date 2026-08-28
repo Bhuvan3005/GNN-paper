@@ -1,0 +1,14 @@
+Feature,Stable degree,Neighbours in all folds
+age,5,"trestbps, chol, thalach, oldpeak, ca"
+sex,1,thal
+cp,5,"thalach, exang, oldpeak, ca, thal"
+trestbps,2,"age, oldpeak"
+chol,1,age
+fbs,0,---
+restecg,0,---
+thalach,7,"age, cp, exang, oldpeak, slope, ca, thal"
+exang,5,"cp, thalach, oldpeak, slope, thal"
+oldpeak,8,"age, cp, trestbps, thalach, exang, slope, ca, thal"
+slope,4,"thalach, exang, oldpeak, thal"
+ca,5,"age, cp, thalach, oldpeak, thal"
+thal,7,"sex, cp, thalach, exang, oldpeak, slope, ca"

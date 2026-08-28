@@ -1,0 +1,11 @@
+Property,Value
+Scores an isolated patient,Yes (inductive)
+Cohort graph required at inference,No
+Patients scored individually,46
+Max deviation vs batch scoring,2.98e-08
+"Latency per patient, mean",2.564 ms
+"Latency per patient, median",2.430 ms
+"Latency per patient, p95",2.933 ms
+Trainable parameters,"1,281"
+Serialised model size,11.4 KB
+Hardware,CPU only

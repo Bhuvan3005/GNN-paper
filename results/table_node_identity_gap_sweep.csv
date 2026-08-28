@@ -1,0 +1,13 @@
+id_dim,Node encoding,Contrast,ΔROC-AUC,Wilcoxon p (15 paired folds),Wins / 15,Holm p,Significant (Holm)
+0,Scalar node (paper baseline),Corr+MST − No graph,0.0089,0.0238,11,0.2222,no
+0,Scalar node (paper baseline),Corr+MST − Fully connected,0.0083,0.0215,11,0.2222,no
+2,Identity embedding (d=2),Corr+MST − No graph,-0.006,0.1577,4,0.4191,no
+2,Identity embedding (d=2),Corr+MST − Fully connected,0.0078,0.0637,10,0.3185,no
+4,Identity embedding (d=4),Corr+MST − No graph,-0.0081,0.0202,3,0.2222,no
+4,Identity embedding (d=4),Corr+MST − Fully connected,0.0081,0.0408,10,0.2471,no
+8,Identity embedding (d=8),Corr+MST − No graph,-0.0882,0.0782,6,0.3185,no
+8,Identity embedding (d=8),Corr+MST − Fully connected,-0.0056,0.4543,10,0.4543,no
+16,Identity embedding (d=16),Corr+MST − No graph,-0.0095,0.0256,4,0.2222,no
+16,Identity embedding (d=16),Corr+MST − Fully connected,0.0072,0.1397,9,0.4191,no
+32,Identity embedding (d=32),Corr+MST − No graph,-0.0605,0.0185,2,0.222,no
+32,Identity embedding (d=32),Corr+MST − Fully connected,0.0751,0.0353,11,0.2471,no

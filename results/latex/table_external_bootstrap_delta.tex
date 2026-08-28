@@ -1,0 +1,18 @@
+\begin{table*}[t]
+\centering
+\caption{Paired bootstrap 95\% confidence intervals for $\Delta$AUC against the feature-node GCN. An interval containing zero indicates the advantage is not established on that cohort.}
+\label{tab:extbootdelta}
+\footnotesize
+\begin{tabular}{lrrrr}
+\toprule
+Cohort & Comparison & $\Delta$AUC & 95\% CI & Excludes zero \\
+\midrule
+Hungarian & GCN $-$ Logistic Regression & 0.169 & [+0.108, +0.231] & yes \\
+Hungarian & GCN $-$ Random Forest & 0.034 & [-0.007, +0.075] & no \\
+Switzerland & GCN $-$ Logistic Regression & 0.116 & [-0.184, +0.407] & no \\
+Switzerland & GCN $-$ Random Forest & 0.067 & [-0.091, +0.215] & no \\
+VA Long Beach & GCN $-$ Logistic Regression & 0.151 & [+0.020, +0.289] & yes \\
+VA Long Beach & GCN $-$ Random Forest & 0.052 & [-0.032, +0.156] & no \\
+\bottomrule
+\end{tabular}
+\end{table*}

@@ -1,0 +1,21 @@
+\begin{table*}[t]
+\centering
+\caption{Model comparison under identical 5-fold stratified cross-validation, repeated over three seeds (mean $\pm$ std).}
+\label{tab:comparison}
+\footnotesize
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lrrrrrr}
+\toprule
+Model & Accuracy & Recall & F1 & ROC-AUC & MCC & Specificity \\
+\midrule
+GCN (Ours) & 0.8131 $\pm$ 0.0638 & 0.8011 $\pm$ 0.0748 & 0.7988 $\pm$ 0.0595 & 0.9056 $\pm$ 0.0408 & 0.6320 $\pm$ 0.1218 & 0.8237 $\pm$ 0.1170 \\
+Logistic Regression & 0.8184 $\pm$ 0.0524 & 0.8444 $\pm$ 0.0842 & 0.8100 $\pm$ 0.0537 & 0.9025 $\pm$ 0.0385 & 0.6457 $\pm$ 0.1003 & 0.7971 $\pm$ 0.0940 \\
+Random Forest & 0.7921 $\pm$ 0.0558 & 0.8393 $\pm$ 0.0844 & 0.7893 $\pm$ 0.0432 & 0.9044 $\pm$ 0.0336 & 0.6035 $\pm$ 0.0933 & 0.7524 $\pm$ 0.1421 \\
+Gradient Boosting & 0.7823 $\pm$ 0.0496 & 0.8026 $\pm$ 0.0758 & 0.7716 $\pm$ 0.0502 & 0.8721 $\pm$ 0.0390 & 0.5708 $\pm$ 0.0945 & 0.7648 $\pm$ 0.0921 \\
+MLP & 0.7822 $\pm$ 0.0480 & 0.8227 $\pm$ 0.0643 & 0.7764 $\pm$ 0.0450 & 0.8680 $\pm$ 0.0320 & 0.5728 $\pm$ 0.0914 & 0.7482 $\pm$ 0.0849 \\
+XGBoost & 0.7944 $\pm$ 0.0459 & 0.8515 $\pm$ 0.0677 & 0.7924 $\pm$ 0.0386 & 0.8845 $\pm$ 0.0332 & 0.6027 $\pm$ 0.0831 & 0.7463 $\pm$ 0.0981 \\
+LightGBM & 0.7922 $\pm$ 0.0456 & 0.7914 $\pm$ 0.0633 & 0.7772 $\pm$ 0.0493 & 0.8817 $\pm$ 0.0355 & 0.5844 $\pm$ 0.0919 & 0.7929 $\pm$ 0.0527 \\
+\bottomrule
+\end{tabular}
+}
+\end{table*}

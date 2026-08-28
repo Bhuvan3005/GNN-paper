@@ -1,0 +1,61 @@
+Identity-embedding dimension sweep: d in [0, 2, 4, 8, 16, 32]
+(3 seeds x 5 folds = 15 runs per cell, 6 dims x 3 topologies = 18 cells)
+========================================================================================
+[    49s] scalar           No graph          AUC=0.8967  F1=0.7901  MCC=0.6242  rank(conv1)=1.01
+[    93s] scalar           Corr+MST          AUC=0.9056  F1=0.7988  MCC=0.6320  rank(conv1)=1.00
+[   146s] scalar           Fully connected   AUC=0.8973  F1=0.7917  MCC=0.6113  rank(conv1)=1.00
+[   187s] identity(d=2)    No graph          AUC=0.9111  F1=0.8038  MCC=0.6405  rank(conv1)=1.45
+[   232s] identity(d=2)    Corr+MST          AUC=0.9051  F1=0.8051  MCC=0.6429  rank(conv1)=1.19
+[   295s] identity(d=2)    Fully connected   AUC=0.8973  F1=0.7909  MCC=0.6085  rank(conv1)=1.00
+[   322s] identity(d=4)    No graph          AUC=0.9136  F1=0.8022  MCC=0.6399  rank(conv1)=2.02
+[   354s] identity(d=4)    Corr+MST          AUC=0.9055  F1=0.8094  MCC=0.6488  rank(conv1)=1.38
+[   409s] identity(d=4)    Fully connected   AUC=0.8973  F1=0.7913  MCC=0.6093  rank(conv1)=1.00
+[   434s] identity(d=8)    No graph          AUC=0.9119  F1=0.8139  MCC=0.6602  rank(conv1)=2.79
+[   455s] identity(d=8)    Corr+MST          AUC=0.8238  F1=0.7898  MCC=0.5670  rank(conv1)=1.62
+[   494s] identity(d=8)    Fully connected   AUC=0.8293  F1=0.7686  MCC=0.5213  rank(conv1)=1.00
+[   519s] identity(d=16)   No graph          AUC=0.9141  F1=0.8115  MCC=0.6472  rank(conv1)=3.97
+[   547s] identity(d=16)   Corr+MST          AUC=0.9046  F1=0.7978  MCC=0.6256  rank(conv1)=2.04
+[   592s] identity(d=16)   Fully connected   AUC=0.8973  F1=0.7912  MCC=0.6094  rank(conv1)=1.00
+[   617s] identity(d=32)   No graph          AUC=0.9143  F1=0.8117  MCC=0.6523  rank(conv1)=5.57
+[   642s] identity(d=32)   Corr+MST          AUC=0.8538  F1=0.7884  MCC=0.5902  rank(conv1)=2.58
+[   686s] identity(d=32)   Fully connected   AUC=0.7787  F1=0.7606  MCC=0.5128  rank(conv1)=1.00
+
+========================================================================================
+FULL SWEEP GRID
+ id_dim                Node encoding        Topology  Effective rank (conv1)         ROC-AUC              F1             MCC        Accuracy
+      0 Scalar node (paper baseline)        No graph                    1.01 0.8967 ± 0.0479 0.7901 ± 0.0696 0.6242 ± 0.1292 0.8075 ± 0.0668
+      0 Scalar node (paper baseline)        Corr+MST                    1.00 0.9056 ± 0.0408 0.7988 ± 0.0595 0.6320 ± 0.1218 0.8131 ± 0.0638
+      0 Scalar node (paper baseline) Fully connected                    1.00 0.8973 ± 0.0432 0.7917 ± 0.0704 0.6113 ± 0.1389 0.8032 ± 0.0735
+      2     Identity embedding (d=2)        No graph                    1.45 0.9111 ± 0.0416 0.8038 ± 0.0534 0.6405 ± 0.1051 0.8163 ± 0.0549
+      2     Identity embedding (d=2)        Corr+MST                    1.19 0.9051 ± 0.0412 0.8051 ± 0.0590 0.6429 ± 0.1170 0.8207 ± 0.0609
+      2     Identity embedding (d=2) Fully connected                    1.00 0.8973 ± 0.0432 0.7909 ± 0.0723 0.6085 ± 0.1429 0.8010 ± 0.0757
+      4     Identity embedding (d=4)        No graph                    2.02 0.9136 ± 0.0355 0.8022 ± 0.0493 0.6399 ± 0.1034 0.8163 ± 0.0545
+      4     Identity embedding (d=4)        Corr+MST                    1.38 0.9055 ± 0.0411 0.8094 ± 0.0503 0.6488 ± 0.0966 0.8240 ± 0.0494
+      4     Identity embedding (d=4) Fully connected                    1.00 0.8973 ± 0.0432 0.7913 ± 0.0729 0.6093 ± 0.1437 0.8021 ± 0.0759
+      8     Identity embedding (d=8)        No graph                    2.79 0.9119 ± 0.0396 0.8139 ± 0.0576 0.6602 ± 0.1121 0.8283 ± 0.0585
+      8     Identity embedding (d=8)        Corr+MST                    1.62 0.8238 ± 0.2294 0.7898 ± 0.0838 0.5670 ± 0.2503 0.7767 ± 0.1372
+      8     Identity embedding (d=8) Fully connected                    1.00 0.8293 ± 0.2066 0.7686 ± 0.0790 0.5213 ± 0.2401 0.7493 ± 0.1338
+     16    Identity embedding (d=16)        No graph                    3.97 0.9141 ± 0.0386 0.8115 ± 0.0566 0.6472 ± 0.1209 0.8196 ± 0.0653
+     16    Identity embedding (d=16)        Corr+MST                    2.04 0.9046 ± 0.0400 0.7978 ± 0.0639 0.6256 ± 0.1357 0.8087 ± 0.0734
+     16    Identity embedding (d=16) Fully connected                    1.00 0.8973 ± 0.0432 0.7912 ± 0.0732 0.6094 ± 0.1444 0.8021 ± 0.0762
+     32    Identity embedding (d=32)        No graph                    5.57 0.9143 ± 0.0368 0.8117 ± 0.0458 0.6523 ± 0.0915 0.8239 ± 0.0481
+     32    Identity embedding (d=32)        Corr+MST                    2.58 0.8538 ± 0.1847 0.7884 ± 0.0718 0.5902 ± 0.1960 0.7911 ± 0.1078
+     32    Identity embedding (d=32) Fully connected                    1.00 0.7787 ± 0.2865 0.7606 ± 0.0851 0.5128 ± 0.2412 0.7470 ± 0.1348
+
+GRAPH GAP BY DIMENSION (sign reversal check)
+ id_dim                Node encoding                   Contrast  ΔROC-AUC  Wilcoxon p (15 paired folds)  Wins / 15
+      0 Scalar node (paper baseline)        Corr+MST − No graph    0.0089                        0.0238         11
+      0 Scalar node (paper baseline) Corr+MST − Fully connected    0.0083                        0.0215         11
+      2     Identity embedding (d=2)        Corr+MST − No graph   -0.0060                        0.1577          4
+      2     Identity embedding (d=2) Corr+MST − Fully connected    0.0078                        0.0637         10
+      4     Identity embedding (d=4)        Corr+MST − No graph   -0.0081                        0.0202          3
+      4     Identity embedding (d=4) Corr+MST − Fully connected    0.0081                        0.0408         10
+      8     Identity embedding (d=8)        Corr+MST − No graph   -0.0882                        0.0782          6
+      8     Identity embedding (d=8) Corr+MST − Fully connected   -0.0056                        0.4543         10
+     16    Identity embedding (d=16)        Corr+MST − No graph   -0.0095                        0.0256          4
+     16    Identity embedding (d=16) Corr+MST − Fully connected    0.0072                        0.1397          9
+     32    Identity embedding (d=32)        Corr+MST − No graph   -0.0605                        0.0185          2
+     32    Identity embedding (d=32) Corr+MST − Fully connected    0.0751                        0.0353         11
+
+Total time: 686s
+Saved: results/table_node_identity_sweep.csv, results/table_node_identity_gap_sweep.csv

@@ -1,0 +1,21 @@
+\begin{table*}[t]
+\centering
+\caption{External ROC-AUC with nested bootstrap 95\% confidence intervals ($B=2000$), propagating both patient-sampling and model-initialisation uncertainty.}
+\label{tab:extboot}
+\footnotesize
+\begin{tabular}{lrrrrr}
+\toprule
+Cohort & Model & n (pos/neg) & AUC & 95\% CI & CI width \\
+\midrule
+Hungarian & GCN (Ours) & 105/187 & 0.875 & [0.829, 0.918] & 0.088 \\
+Hungarian & Logistic Regression & 105/187 & 0.706 & [0.642, 0.767] & 0.125 \\
+Hungarian & Random Forest & 105/187 & 0.841 & [0.786, 0.891] & 0.105 \\
+Switzerland & GCN (Ours) & 108/8 & 0.745 & [0.543, 0.927] & 0.384 \\
+Switzerland & Logistic Regression & 108/8 & 0.628 & [0.392, 0.833] & 0.441 \\
+Switzerland & Random Forest & 108/8 & 0.678 & [0.430, 0.897] & 0.467 \\
+VA Long Beach & GCN (Ours) & 110/30 & 0.722 & [0.622, 0.813] & 0.191 \\
+VA Long Beach & Logistic Regression & 110/30 & 0.571 & [0.455, 0.688] & 0.233 \\
+VA Long Beach & Random Forest & 110/30 & 0.669 & [0.553, 0.772] & 0.219 \\
+\bottomrule
+\end{tabular}
+\end{table*}

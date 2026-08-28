@@ -1,0 +1,37 @@
+\begin{table*}[t]
+\centering
+\caption{Paired patient-level bootstrap on the external cohorts. Panel (a) reports per-model ROC-AUC with percentile intervals; panel (b) reports the paired differences against the feature-node model.}
+\label{tab:extboot}
+\label{tab:extbootdelta}
+\footnotesize
+\textbf{(a) Bootstrap ROC-AUC}\\[2pt]
+\begin{tabular}{lrrrrr}
+\toprule
+Cohort & Model & n (pos/neg) & AUC & 95\% CI & CI width \\
+\midrule
+Hungarian & GCN (Ours) & 105/187 & 0.875 & [0.829, 0.918] & 0.088 \\
+Hungarian & Logistic Regression & 105/187 & 0.706 & [0.642, 0.767] & 0.125 \\
+Hungarian & Random Forest & 105/187 & 0.841 & [0.786, 0.891] & 0.105 \\
+Switzerland & GCN (Ours) & 108/8 & 0.745 & [0.543, 0.927] & 0.384 \\
+Switzerland & Logistic Regression & 108/8 & 0.628 & [0.392, 0.833] & 0.441 \\
+Switzerland & Random Forest & 108/8 & 0.678 & [0.430, 0.897] & 0.467 \\
+VA Long Beach & GCN (Ours) & 110/30 & 0.722 & [0.622, 0.813] & 0.191 \\
+VA Long Beach & Logistic Regression & 110/30 & 0.571 & [0.455, 0.688] & 0.233 \\
+VA Long Beach & Random Forest & 110/30 & 0.669 & [0.553, 0.772] & 0.219 \\
+\bottomrule
+\end{tabular}
+\vspace{7pt}
+\textbf{(b) Paired differences}\\[2pt]
+\begin{tabular}{lrrrr}
+\toprule
+Cohort & Comparison & $\Delta$AUC & 95\% CI & Excludes zero \\
+\midrule
+Hungarian & GCN $-$ Logistic Regression & 0.169 & [+0.108, +0.231] & yes \\
+Hungarian & GCN $-$ Random Forest & 0.034 & [-0.007, +0.075] & no \\
+Switzerland & GCN $-$ Logistic Regression & 0.116 & [-0.184, +0.407] & no \\
+Switzerland & GCN $-$ Random Forest & 0.067 & [-0.091, +0.215] & no \\
+VA Long Beach & GCN $-$ Logistic Regression & 0.151 & [+0.020, +0.289] & yes \\
+VA Long Beach & GCN $-$ Random Forest & 0.052 & [-0.032, +0.156] & no \\
+\bottomrule
+\end{tabular}
+\end{table*}

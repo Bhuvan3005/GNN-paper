@@ -1,0 +1,13 @@
+Cohort,Model,pt=0.10,pt=0.20,pt=0.30,pt=0.40,pt=0.50
+Hungarian,GCN (Ours),0.293,0.2791,0.2197,0.1918,0.1644
+Hungarian,Logistic Regression,0.2424,0.2046,0.1659,0.0742,0.0514
+Hungarian,Random Forest,0.2884,0.1995,0.1287,0.0354,0.1404
+Hungarian,Treat all,0.2884,0.1995,0.0851,-0.0674,-0.2808
+Switzerland,GCN (Ours),0.9061,0.8297,0.6872,0.569,0.4483
+Switzerland,Logistic Regression,0.6935,0.6875,0.6798,0.4023,0.3879
+Switzerland,Random Forest,0.9234,0.9138,0.8929,0.8678,0.75
+Switzerland,Treat all,0.9234,0.9138,0.9015,0.8851,0.8621
+VA Long Beach,GCN (Ours),0.7619,0.6911,0.6306,0.519,0.4571
+VA Long Beach,Logistic Regression,0.7008,0.6679,0.6235,0.3262,0.3
+VA Long Beach,Random Forest,0.7619,0.7321,0.6939,0.6476,0.5286
+VA Long Beach,Treat all,0.7619,0.7321,0.6939,0.6429,0.5714

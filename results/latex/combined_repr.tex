@@ -1,0 +1,41 @@
+\begin{table*}[t]
+\centering
+\caption{Learned representation. Panel (a) reports the effective rank of the node embeddings; panel (b) lists the fold-stable feature neighbourhoods.}
+\label{tab:rank}
+\label{tab:neighbourhoods}
+\footnotesize
+\textbf{(a) Effective rank}\\[2pt]
+\begin{tabular}{lrr}
+\toprule
+Topology & Stage & Effective rank (mean $\pm$ std) \\
+\midrule
+Corr+MST (Ours) & conv1 (pre BN/ReLU) & 1.00 $\pm$ 0.00 \\
+Corr+MST (Ours) & layer 1 (BN+ReLU) & 1.63 $\pm$ 0.41 \\
+Corr+MST (Ours) & layer 2 & 1.73 $\pm$ 0.62 \\
+No graph & conv1 (pre BN/ReLU) & 1.01 $\pm$ 0.00 \\
+No graph & layer 1 (BN+ReLU) & 1.93 $\pm$ 0.23 \\
+No graph & layer 2 & 2.22 $\pm$ 0.24 \\
+\bottomrule
+\end{tabular}
+\vspace{7pt}
+\textbf{(b) Feature neighbourhoods}\\[2pt]
+\begin{tabular}{lrr}
+\toprule
+Feature & Stable degree & Neighbours in all folds \\
+\midrule
+age & 5 & trestbps, chol, thalach, oldpeak, ca \\
+sex & 1 & thal \\
+cp & 5 & thalach, exang, oldpeak, ca, thal \\
+trestbps & 2 & age, oldpeak \\
+chol & 1 & age \\
+fbs & 0 & --- \\
+restecg & 0 & --- \\
+thalach & 7 & age, cp, exang, oldpeak, slope, ca, thal \\
+exang & 5 & cp, thalach, oldpeak, slope, thal \\
+oldpeak & 8 & age, cp, trestbps, thalach, exang, slope, ca, thal \\
+slope & 4 & thalach, exang, oldpeak, thal \\
+ca & 5 & age, cp, thalach, oldpeak, thal \\
+thal & 7 & sex, cp, thalach, exang, oldpeak, slope, ca \\
+\bottomrule
+\end{tabular}
+\end{table*}

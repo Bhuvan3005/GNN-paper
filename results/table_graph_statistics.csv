@@ -1,0 +1,9 @@
+Statistic,Value (mean ± std)
+Nodes,13
+Edges,34.4000 ± 2.4980
+Density,0.4410 ± 0.0320
+Avg Degree,5.2923 ± 0.3843
+Avg Path Length,1.7051 ± 0.0858
+Diameter,3.8000 ± 0.4000
+Clustering Coeff,0.5494 ± 0.0888
+Fiedler Value,0.9529 ± 0.4437

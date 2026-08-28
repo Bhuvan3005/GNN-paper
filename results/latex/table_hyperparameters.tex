@@ -1,0 +1,40 @@
+\begin{table}[t]
+\centering
+\caption{Training and architecture hyperparameters.}
+\label{tab:hyperparams}
+\small
+\begin{tabular}{p{3.1cm}p{4.6cm}}
+\toprule
+Hyperparameter & Value \\
+\midrule
+Node feature dim & 1 (scalar clinical value) \\
+\# Nodes & 13 (clinical features) \\
+Continuous features (scaled) & 5 \\
+Categorical features (raw) & 8 \\
+Correlation metric & Pearson \\
+Correlation threshold $\tau$ & 0.15 \\
+Graph augmentation & Minimum Spanning Tree ($d = 1 - |r|$) \\
+GCN layers & 2 \\
+Hidden dimension & 32 \\
+Normalization & BatchNorm1d \\
+Activation & ReLU \\
+Dropout & 0.30 \\
+Readout & Global mean pooling \\
+Output head & Linear(32$\to$1) + sigmoid \\
+Loss & BCEWithLogits (balanced) \\
+Optimizer & Adam \\
+Learning rate & 1e-3 \\
+Weight decay & 1e-4 \\
+Gradient clipping & max-norm 1.0 \\
+Batch size & 32 \\
+Max epochs & 150 \\
+Early stopping patience & 25 (val loss) \\
+Decision threshold & tuned on inner-validation (F1) \\
+Cross-validation & 5-fold Stratified \\
+Inner val split & 15\% of train fold (stratified) \\
+Scaling & MinMax (continuous cols), fit in-fold \\
+Framework & PyTorch 2.x + PyG 2.7, CPU \\
+Seeds & 42, 7, 123 \\
+\bottomrule
+\end{tabular}
+\end{table}

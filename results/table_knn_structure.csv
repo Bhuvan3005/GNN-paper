@@ -1,0 +1,6 @@
+Construction,Edges,Min degree,Connected folds
+"Corr+MST, τ=0.15 (Ours)",34.4 ± 2.5,1,5/5
+"Corr only, τ=0.15",34.4 ± 2.5,1,5/5
+"k-NN, k=2",18.4 ± 1.0,2,5/5
+"k-NN, k=3",26.8 ± 0.4,3,5/5
+"k-NN, k=4",34.6 ± 1.0,4,5/5

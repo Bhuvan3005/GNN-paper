@@ -1,0 +1,19 @@
+\begin{table*}[t]
+\centering
+\caption{Global correlation cut-off versus adaptive per-node $k$-NN graph construction (mean $\pm$ std over 3 seeds $\times$ 5 folds).}
+\label{tab:knn}
+\footnotesize
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lrrrrrr}
+\toprule
+Construction & Accuracy & F1 & ROC-AUC & MCC & Recall & Specificity \\
+\midrule
+Corr+MST, $\tau$=0.15 (Ours) & 0.8109 $\pm$ 0.0652 & 0.7971 $\pm$ 0.0597 & 0.9051 $\pm$ 0.0413 & 0.6280 $\pm$ 0.1240 & 0.8011 $\pm$ 0.0748 & 0.8196 $\pm$ 0.1208 \\
+Corr only, $\tau$=0.15 & 0.8032 $\pm$ 0.0787 & 0.7936 $\pm$ 0.0692 & 0.9027 $\pm$ 0.0437 & 0.6164 $\pm$ 0.1468 & 0.8105 $\pm$ 0.0825 & 0.7974 $\pm$ 0.1464 \\
+k-NN, k=2 & 0.8185 $\pm$ 0.0608 & 0.8076 $\pm$ 0.0585 & 0.8990 $\pm$ 0.0429 & 0.6429 $\pm$ 0.1195 & 0.8249 $\pm$ 0.0751 & 0.8134 $\pm$ 0.1032 \\
+k-NN, k=3 & 0.8054 $\pm$ 0.1102 & 0.8021 $\pm$ 0.0756 & 0.9015 $\pm$ 0.0406 & 0.6180 $\pm$ 0.2033 & 0.8200 $\pm$ 0.0819 & 0.7932 $\pm$ 0.2300 \\
+k-NN, k=4 & 0.8163 $\pm$ 0.0632 & 0.8023 $\pm$ 0.0632 & 0.9036 $\pm$ 0.0402 & 0.6363 $\pm$ 0.1209 & 0.8102 $\pm$ 0.0805 & 0.8212 $\pm$ 0.1022 \\
+\bottomrule
+\end{tabular}
+}
+\end{table*}

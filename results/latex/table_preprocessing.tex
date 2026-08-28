@@ -1,0 +1,17 @@
+\begin{table}[t]
+\centering
+\caption{Preprocessing pipeline summary.}
+\label{tab:prep}
+\small
+\begin{tabular}{p{2.4cm}p{5.4cm}}
+\toprule
+Step & Detail \\
+\midrule
+Continuous scaling & Min--max to $[0,1]$, fit on training partition only \\
+Categorical/ordinal & Retained as integer codes (unchanged) \\
+Missing values & None present in the dataset \\
+Train/val/test split & Stratified 5-fold CV; 15\% inner-validation within each training fold \\
+Graph construction & Pearson correlation + MST, computed on the training partition of each fold \\
+\bottomrule
+\end{tabular}
+\end{table}

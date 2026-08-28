@@ -1,0 +1,18 @@
+\begin{table}[t]
+\centering
+\caption{What the MST augmentation changes. At $\tau=0.15$ it is inert; at $\tau=0.20$ it restores a single connected component in every fold.}
+\label{tab:mstconn}
+\small
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{lrrr}
+\toprule
+Configuration & Edges & Components & Connected folds \\
+\midrule
+Corr only, $\tau$=0.15 & 34.4 $\pm$ 2.5 & 1.0 & 5/5 \\
+Corr+MST, $\tau$=0.15 & 34.4 $\pm$ 2.5 & 1.0 & 5/5 \\
+Corr only, $\tau$=0.20 & 23.6 $\pm$ 1.0 & 2.8 & 0/5 \\
+Corr+MST, $\tau$=0.20 & 25.4 $\pm$ 1.0 & 1.0 & 5/5 \\
+\bottomrule
+\end{tabular}
+}
+\end{table}

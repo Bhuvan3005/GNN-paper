@@ -1,0 +1,4 @@
+Cohort,Total records,Complete cases (8 features),Missing (dropped),Missing %,Prevalence (all records),Prevalence (complete cases),Positive (n),Negative (n),Status
+Hungarian,294,292,2,0.7,36.1%,36.0%,105,187,evaluated
+Switzerland,123,116,7,5.7,93.5%,93.1%,108,8,evaluated
+VA Long Beach,200,140,60,30.0,74.5%,78.6%,110,30,evaluated

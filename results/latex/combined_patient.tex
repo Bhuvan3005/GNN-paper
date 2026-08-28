@@ -1,0 +1,29 @@
+\begin{table*}[t]
+\centering
+\caption{Feature-node versus patient-similarity formulation in distribution. Panel (a) reports the paired comparison; panel (b) reports the significance tests.}
+\label{tab:formulation}
+\label{tab:formstats}
+\footnotesize
+\textbf{(a) Paired comparison}\\[2pt]
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lrrrrrrr}
+\toprule
+Formulation & Accuracy & Precision & Recall & F1 & ROC-AUC & MCC & Specificity \\
+\midrule
+Feature-node graph (Ours) & 0.8109 $\pm$ 0.0652 & 0.8044 $\pm$ 0.0999 & 0.8011 $\pm$ 0.0748 & 0.7971 $\pm$ 0.0597 & 0.9051 $\pm$ 0.0413 & 0.6280 $\pm$ 0.1240 & 0.8196 $\pm$ 0.1208 \\
+Patient-similarity graph (k=15) & 0.8021 $\pm$ 0.0467 & 0.7791 $\pm$ 0.0963 & 0.8275 $\pm$ 0.0970 & 0.7931 $\pm$ 0.0447 & 0.8891 $\pm$ 0.0358 & 0.6184 $\pm$ 0.0895 & 0.7807 $\pm$ 0.1163 \\
+\bottomrule
+\end{tabular}
+}
+\vspace{7pt}
+\textbf{(b) Significance tests}\\[2pt]
+\begin{tabular}{lrrrrrrr}
+\toprule
+Seed & AUC (feature-node) & AUC (patient-sim) & $\Delta$AUC & b & c & McNemar p & DeLong p \\
+\midrule
+42.0 & 0.9033 & 0.8909 & 0.0124 & 22.0 & 21.0 & 1.0 & 0.3506 \\
+7.0 & 0.8915 & 0.8903 & 0.0012 & 20.0 & 17.0 & 0.7423 & 0.9097 \\
+123.0 & 0.9005 & 0.8726 & 0.0279 & 11.0 & 23.0 & 0.0592 & 0.01708 \\
+\bottomrule
+\end{tabular}
+\end{table*}

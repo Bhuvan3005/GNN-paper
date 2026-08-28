@@ -1,0 +1,33 @@
+\begin{table*}[t]
+\centering
+\caption{Convolution-operator comparison. Panel (a) reports performance for each operator; panel (b) reports the paired significance tests against GCN. All $p$-values in panel (b) are medians over the matched runs, with Holm correction applied within the family.}
+\label{tab:convs}
+\label{tab:convstats}
+\footnotesize
+\textbf{(a) Performance by operator}\\[2pt]
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lrrrrrrrr}
+\toprule
+Operator & Params & Accuracy & Precision & Recall & F1 & ROC-AUC & MCC & Specificity \\
+\midrule
+GCN (Ours) & 1281 & 0.8109 $\pm$ 0.0652 & 0.8044 $\pm$ 0.0999 & 0.8011 $\pm$ 0.0748 & 0.7971 $\pm$ 0.0597 & 0.9051 $\pm$ 0.0413 & 0.6280 $\pm$ 0.1240 & 0.8196 $\pm$ 0.1208 \\
+GAT & 1409 & 0.8109 $\pm$ 0.0718 & 0.8031 $\pm$ 0.1074 & 0.8058 $\pm$ 0.0759 & 0.7987 $\pm$ 0.0668 & 0.9022 $\pm$ 0.0426 & 0.6290 $\pm$ 0.1359 & 0.8154 $\pm$ 0.1303 \\
+GraphSAGE & 2337 & 0.8174 $\pm$ 0.0636 & 0.8039 $\pm$ 0.0872 & 0.8131 $\pm$ 0.0739 & 0.8045 $\pm$ 0.0611 & 0.9034 $\pm$ 0.0407 & 0.6390 $\pm$ 0.1220 & 0.8214 $\pm$ 0.1041 \\
+GIN & 3393 & 0.8240 $\pm$ 0.0708 & 0.8025 $\pm$ 0.0888 & 0.8322 $\pm$ 0.0650 & 0.8146 $\pm$ 0.0667 & 0.9008 $\pm$ 0.0418 & 0.6514 $\pm$ 0.1355 & 0.8171 $\pm$ 0.1068 \\
+\bottomrule
+\end{tabular}
+}
+\vspace{7pt}
+\textbf{(b) Paired tests against GCN}\\[2pt]
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lrrrrrrr}
+\toprule
+Comparison & Mean $\Delta$AUC & DeLong p & McNemar p & Holm p (DeLong) & Sig. (DeLong) & Holm p (McNemar) & Sig. (McNemar) \\
+\midrule
+GCN vs GAT & 0.0027 & 0.7192 & 0.05737 & 1.0 & no & 0.1721 & no \\
+GCN vs GraphSAGE & -0.0027 & 0.819 & 0.146 & 1.0 & no & 0.292 & no \\
+GCN vs GIN & 0.001 & 0.6314 & 0.2632 & 1.0 & no & 0.292 & no \\
+\bottomrule
+\end{tabular}
+}
+\end{table*}

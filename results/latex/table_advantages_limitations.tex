@@ -1,0 +1,18 @@
+\begin{table*}[t]
+\centering
+\caption{Advantages and limitations of the feature-node graph approach.}
+\label{tab:advlim}
+\footnotesize
+\begin{tabular}{p{4cm}p{4cm}}
+\toprule
+Advantage & Corresponding limitation \\
+\midrule
+Inductive (no cohort graph at inference) & Node feature is a single scalar, limiting message-passing benefit \\
+Exposes feature-interaction topology & Correlation graph captures only linear dependence \\
+Statistically on par with strong tabular baselines & Does not exceed them; small, near-ceiling-AUC cohort limits headroom \\
+MST guarantees connectivity, verified spectrally & MST does not itself improve accuracy \\
+Multi-method explanations agree strongly ($\rho\approx0.85$) & Explanations validated only against a curated clinical reference set \\
+Lightweight, trains in seconds on CPU & Single-centre, $n=303$; no external validation yet \\
+\bottomrule
+\end{tabular}
+\end{table*}
