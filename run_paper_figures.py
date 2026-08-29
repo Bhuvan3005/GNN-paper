@@ -48,9 +48,9 @@ os.makedirs("figures", exist_ok=True)
 SEED = 42
 PALETTE = {"GCN (Ours)": "#2ECC71", "Logistic Regression": "#3498DB",
           "Random Forest": "#9B59B6", "Gradient Boosting": "#F39C12",
-          "MLP": "#E74C3C"}
+          "MLP": "#E74C3C", "XGBoost": "#16A085", "LightGBM": "#D35400"}
 MODEL_ORDER = ["GCN (Ours)", "Logistic Regression", "Random Forest",
-              "Gradient Boosting", "MLP"]
+              "Gradient Boosting", "MLP", "XGBoost", "LightGBM"]
 
 
 def parse_ms(s):

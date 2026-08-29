@@ -177,7 +177,8 @@ def main():
     pooled = pd.DataFrame(pooled_rows)
     pooled.to_csv("results/table_pooled_oof.csv", index=False)
 
-    # ---- Statistical tests: GCN vs LR, GCN vs RF ----
+    # ---- Statistical tests: GCN vs every baseline (all six, matching the
+    # baselines reported in table_model_comparison.csv) ----
     print("\n" + "=" * 78)
     print("STATISTICAL SIGNIFICANCE (GCN vs baselines)")
     print("=" * 78)
@@ -187,7 +188,8 @@ def main():
     gcn_f1_folds = oof_store["GCN (Ours)"]["f1"]
 
     stat_rows = []
-    for other in ["Logistic Regression", "Random Forest", "XGBoost", "LightGBM"]:
+    for other in ["Logistic Regression", "Random Forest", "Gradient Boosting",
+                  "MLP", "XGBoost", "LightGBM"]:
         opred = oof_store[other]["pred"]
         ocorrect = (opred == true).astype(int)
         # McNemar contingency on the seed-SEED pooled OOF partition (all 303)

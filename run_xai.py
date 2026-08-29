@@ -180,7 +180,9 @@ def deletion_insertion(model, graph, scores, edge_index):
         x = x.clone(); x[idx] = graph.x[idx]
         ins_curve.append(_prob(model, x, edge_index))
     xs = np.linspace(0, 1, len(del_curve))
-    return float(np.trapz(del_curve, xs)), float(np.trapz(ins_curve, xs)), \
+    # np.trapz was removed in NumPy 2.0; np.trapezoid is the replacement.
+    _trap = getattr(np, "trapezoid", None) or np.trapz
+    return float(_trap(del_curve, xs)), float(_trap(ins_curve, xs)), \
         np.array(del_curve), np.array(ins_curve)
 
 

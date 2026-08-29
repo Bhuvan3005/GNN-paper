@@ -115,6 +115,101 @@ def load_data(csv_path: str = CSV_PATH):
 
 
 # ----------------------------------------------------------------------
+# Mixed-type association (Cramer's V / correlation ratio / Pearson)
+# ----------------------------------------------------------------------
+# Pearson correlation on integer-coded categorical/ordinal columns (cp,
+# restecg, slope, thal) implicitly assumes the numeric codes are equally
+# spaced and ordered, which is not a valid assumption for nominal codes.
+# This block computes an association matrix that is valid for mixed
+# continuous/categorical data: Cramer's V (bias-corrected, Bergsma 2013)
+# for categorical-categorical pairs, the correlation ratio eta for
+# continuous-categorical pairs, and Pearson |r| for continuous-continuous
+# pairs. All three land on [0, 1], so the result is drop-in compatible
+# with the existing threshold-and-MST graph construction below.
+def _cramers_v_corrected(x: np.ndarray, y: np.ndarray) -> float:
+    """Bias-corrected Cramer's V between two categorical integer arrays."""
+    x = np.asarray(x); y = np.asarray(y)
+    ux, xi = np.unique(x, return_inverse=True)
+    uy, yi = np.unique(y, return_inverse=True)
+    r, c = len(ux), len(uy)
+    if r < 2 or c < 2:
+        return 0.0
+    table = np.zeros((r, c))
+    for a, b in zip(xi, yi):
+        table[a, b] += 1
+    n = table.sum()
+    if n <= 1:
+        return 0.0
+    row_sums = table.sum(axis=1, keepdims=True)
+    col_sums = table.sum(axis=0, keepdims=True)
+    expected = row_sums @ col_sums / n
+    with np.errstate(divide="ignore", invalid="ignore"):
+        terms = np.where(expected > 0, (table - expected) ** 2 / expected, 0.0)
+    chi2 = float(np.nansum(terms))
+    phi2 = chi2 / n
+    phi2_corr = max(0.0, phi2 - (r - 1) * (c - 1) / (n - 1))
+    r_corr = r - (r - 1) ** 2 / (n - 1)
+    c_corr = c - (c - 1) ** 2 / (n - 1)
+    denom = min(r_corr - 1, c_corr - 1)
+    if denom <= 0:
+        return 0.0
+    return float(min(max(np.sqrt(phi2_corr / denom), 0.0), 1.0))
+
+
+def _correlation_ratio(categories: np.ndarray, continuous: np.ndarray) -> float:
+    """Correlation ratio eta: how much a categorical grouping explains the
+    variance of a continuous variable. Scale-invariant (affine transforms of
+    `continuous`, e.g. MinMax scaling, do not change the result)."""
+    categories = np.asarray(categories)
+    continuous = np.asarray(continuous, dtype=float)
+    grand_mean = continuous.mean()
+    ss_total = float(np.sum((continuous - grand_mean) ** 2))
+    if ss_total <= 0:
+        return 0.0
+    ss_between = 0.0
+    for cval in np.unique(categories):
+        mask = categories == cval
+        nc = int(mask.sum())
+        if nc == 0:
+            continue
+        ss_between += nc * (continuous[mask].mean() - grand_mean) ** 2
+    eta2 = max(0.0, ss_between / ss_total)
+    return float(np.sqrt(min(eta2, 1.0)))
+
+
+def compute_mixed_association(
+    X_df: pd.DataFrame,
+    features: list[str] = FEATURES,
+    categorical_cols: list[str] = CATEGORICAL_COLS,
+) -> np.ndarray:
+    """Symmetric |association| matrix over `features`, valid for mixed
+    continuous/categorical data. Diagonal is 1.0. Computed entirely from
+    the frame passed in (call with the fold's TRAIN-only data, exactly like
+    the existing Pearson `X_train_scaled[FEATURES].corr()` call, to preserve
+    the no-leakage convention)."""
+    n = len(features)
+    cat_set = set(categorical_cols)
+    A = np.eye(n)
+    cols = {f: X_df[f].values for f in features}
+    for i in range(n):
+        for j in range(i + 1, n):
+            fi, fj = features[i], features[j]
+            xi, xj = cols[fi], cols[fj]
+            i_cat, j_cat = fi in cat_set, fj in cat_set
+            if not i_cat and not j_cat:
+                if np.std(xi) == 0 or np.std(xj) == 0:
+                    v = 0.0
+                else:
+                    v = abs(float(np.corrcoef(xi, xj)[0, 1]))
+            elif i_cat and j_cat:
+                v = _cramers_v_corrected(xi, xj)
+            else:
+                v = _correlation_ratio(xi, xj) if i_cat else _correlation_ratio(xj, xi)
+            A[i, j] = A[j, i] = v
+    return A
+
+
+# ----------------------------------------------------------------------
 # Fold-specific graph construction
 # ----------------------------------------------------------------------
 def _complete_corr_graph(corr: np.ndarray):
@@ -164,18 +259,28 @@ def build_edge_index(
                             single global cut-off); undirected union
       'knn<k>_mst'       -> the above plus MST bridges, matching the full
                             model's connectivity guarantee
+      'mixed_mst'        -> mixed-type association (Cramer's V / eta / |r|,
+                            see compute_mixed_association) thresholded at
+                            `threshold` + MST bridges -- addresses the
+                            concern that Pearson on integer-coded nominal
+                            columns (cp, restecg, slope, thal) implies a
+                            false ordering
+      'mixed_only'       -> mixed-type association edges only (no MST)
     """
-    corr = X_train_scaled[FEATURES].corr().values
     n = N_FEATURES
+    if topology in ("mixed_mst", "mixed_only"):
+        corr = compute_mixed_association(X_train_scaled)
+    else:
+        corr = X_train_scaled[FEATURES].corr().values
 
-    if topology in ("corr_mst", "corr_only"):
+    if topology in ("corr_mst", "corr_only", "mixed_mst", "mixed_only"):
         G = nx.Graph()
         G.add_nodes_from(range(n))
         for i in range(n):
             for j in range(i + 1, n):
                 if abs(corr[i, j]) >= threshold:
                     G.add_edge(i, j)
-        if topology == "corr_mst":
+        if topology in ("corr_mst", "mixed_mst"):
             G = _corr_mst_edge_set(corr, threshold)
 
     elif topology == "fully_connected":
