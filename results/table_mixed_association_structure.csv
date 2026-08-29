@@ -1,0 +1,4 @@
+Construction,Edges,Min degree,Connected folds
+"Corr+MST, τ=0.15 (Ours)",34.4 ± 2.5,1,5/5
+"Mixed-assoc+MST, τ=0.15",37.8 ± 2.4,1,5/5
+"Mixed-assoc only, τ=0.15",37.8 ± 2.4,1,5/5

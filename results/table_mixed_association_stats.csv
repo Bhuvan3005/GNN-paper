@@ -1,0 +1,4 @@
+Comparison,Metric,Mean A,Mean B,Δ (A−B),Wilcoxon p,Holm p,Significant (Holm)
+"Corr+MST, τ=0.15 (Ours) vs Mixed-assoc+MST, τ=0.15",F1,0.7988,0.7994,-0.0006,0.8589,1.0,no
+"Corr+MST, τ=0.15 (Ours) vs Mixed-assoc+MST, τ=0.15",ROC-AUC,0.9056,0.9032,0.0023,0.0554,0.1662,no
+"Corr+MST, τ=0.15 (Ours) vs Mixed-assoc+MST, τ=0.15",MCC,0.632,0.6305,0.0015,1.0,1.0,no

@@ -1,0 +1,2 @@
+Comparison,Jaccard overlap (mean),Jaccard overlap (std)
+Corr+MST vs Mixed-assoc+MST,0.833,0.046
