@@ -1,0 +1,72 @@
+%% =====================================================================
+%%  IEEE ACCESS SUBMISSION  --  supplementary.tex
+%%  Supplementary material: secondary robustness tables referenced from
+%%  main.tex but moved here as part of the page-reduction pass. Each
+%%  table below is the full, unabridged version of a result summarised
+%%  in prose in the main text; nothing here changes any reported number.
+%% =====================================================================
+\documentclass[journal]{IEEEtran}
+
+\usepackage{amsmath,amssymb}
+\usepackage{newtxtext,newtxmath}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{url}
+\usepackage[hidelinks]{hyperref}
+\usepackage{xcolor}
+\usepackage{textcomp}
+\graphicspath{{../figures/}}
+
+\renewcommand{\thetable}{S\arabic{table}}
+\renewcommand{\thesection}{S}
+
+\begin{document}
+
+\title{Supplementary Material for:\\
+When Accuracy Saturates: A Feature-Node Graph Representation\\
+for Deployable and Transportable Cardiovascular Risk Prediction}
+
+\author{}
+\maketitle
+
+\noindent This file collects the full versions of four secondary
+robustness tables that are summarised in prose in the main text but
+omitted from the printed manuscript for length. No number here differs
+from what was used to support the corresponding claim in the main text;
+these tables provide the complete per-configuration detail underlying
+those summaries.
+
+\section*{Table S1: Correlation-threshold sensitivity}
+\label{sec:supp_threshold}
+Referenced from the main text as ``Threshold sensitivity''
+(Section~4.7 there). Full detail across $\tau\in\{0.05,0.10,0.15,0.20,0.30\}$.
+
+\input{../results/latex/table_threshold_sensitivity}
+
+\section*{Table S2: Convolution-operator comparison}
+\label{sec:supp_conv}
+Referenced from the main text as item (v) of the ablation study
+(``The choice of message-passing operator is not critical''). Full
+performance table and paired significance tests for GCN vs.\ GAT,
+GraphSAGE and GIN.
+
+\input{../results/latex/combined_conv}
+
+\section*{Table S3: Identity-embedding dimension sweep --- performance}
+\label{sec:supp_nodeidsweep}
+Referenced from the main text in ``Does the reversal generalise beyond
+$d=8$?'' Full performance and effective-rank table across
+$d\in\{0,2,4,8,16,32\}$ and three topologies.
+
+\input{../results/latex/table_node_identity_sweep}
+
+\section*{Table S4: Identity-embedding dimension sweep --- paired graph gap}
+\label{sec:supp_nodeidgapsweep}
+Companion to Table~S3: the paired internal graph gap at each embedding
+dimension, Holm-corrected jointly across all twelve (dimension,
+contrast) hypotheses.
+
+\input{../results/latex/table_node_identity_gap_sweep}
+
+\end{document}

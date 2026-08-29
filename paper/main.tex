@@ -52,9 +52,8 @@
 xxxx 00, 0000.}
 \doi{10.1109/ACCESS.2026.DOI}
 
-\title{Beyond Accuracy: A Feature-Node Graph Representation for
-Interpretable, Deployable and Transportable Cardiovascular Risk
-Prediction}
+\title{When Accuracy Saturates: A Feature-Node Graph Representation
+for Deployable and Transportable Cardiovascular Risk Prediction}
 
 %% ------------------------- SUBMISSION-TODO -------------------------
 %% Replace the placeholder author, affiliation, ORCID and e-mail below.
@@ -98,15 +97,21 @@ Multilayer Perceptron, XGBoost and LightGBM) over three seeds, a
 two-layer graph convolutional network is statistically indistinguishable
 from every one of them, including the two modern gradient-boosted-tree
 models (McNemar $p=0.70$ against Logistic Regression, $p=0.77$ against
-Random Forest, $p=1.00$ against XGBoost, $p=0.66$ against LightGBM) on
-303 patients; we report this parity as a finding, not an improvement. The formulation differs
+Random Forest, $p=0.68$ against Gradient Boosting, $p=0.68$ against the
+Multilayer Perceptron, $p=1.00$ against XGBoost, $p=0.66$ against
+LightGBM) on 303 patients; we report this parity as a finding, not an
+improvement. The formulation differs
 operationally: it is inductive, scoring single patients with no cohort
 present, reproducing batch predictions to $3\times10^{-8}$ in $2.6$\,ms
 from an $11.4$\,KB, $1{,}281$-parameter model, whereas the conventional
 patient-similarity GNN cannot score an isolated patient at all and
-collapses to a single-class predictor on one external cohort. Fitting
-every component on Cleveland and touching each external cohort once,
-the model attains higher ROC-AUC in all six model--cohort comparisons
+collapses to a single-class predictor on one external cohort. Because
+three of the thirteen features (\texttt{ca}, \texttt{thal},
+\texttt{slope}) are not recorded in the other cohorts, cross-cohort
+transport uses a prespecified eight-feature version of the same
+architecture, retrained once on Cleveland and evaluated once per
+cohort; on that eight-feature model the graph attains higher ROC-AUC
+in all six model--cohort comparisons
 and retains calibration under shift where the linear baseline collapses
 ($0.091$ versus $0.318$ expected calibration error on Hungarian);
 bootstrap intervals establish the advantage against Logistic Regression
@@ -121,15 +126,15 @@ all result tables are released.
 %% "Index Terms". The content is identical, so the source is shared.
 \ifnum\ACCESSCLASS=1
   \begin{keywords}
-  Cardiovascular disease, clinical tabular data, distribution shift,
-  explainable artificial intelligence, external validation, feature
+  Cardiovascular disease, clinical tabular data, cross-cohort transport,
+  distribution shift, explainable artificial intelligence, feature
   graph, graph neural networks, inductive inference, model
   transportability, representation learning.
   \end{keywords}
 \else
   \begin{IEEEkeywords}
-  Cardiovascular disease, clinical tabular data, distribution shift,
-  explainable artificial intelligence, external validation, feature
+  Cardiovascular disease, clinical tabular data, cross-cohort transport,
+  distribution shift, explainable artificial intelligence, feature
   graph, graph neural networks, inductive inference, model
   transportability, representation learning.
   \end{IEEEkeywords}
@@ -158,7 +163,7 @@ clinicians reason about. In this work we study the complementary
 \emph{feature-node} formulation: every patient is an independent graph
 whose nodes are the thirteen clinical features and whose fixed topology
 encodes feature--feature dependence. Message passing then propagates
-information along clinically meaningful feature relationships, and the
+information along data-derived feature associations, and the
 resulting representation is inductive and inspectable.
 
 \textbf{Position of this paper.} We deliberately do not frame this work
@@ -193,7 +198,12 @@ safely rather than collapsing to a degenerate predictor?
 Accuracy is reported throughout, but as a \emph{control}: our claim is
 that the feature-node representation is competitive, not superior, and we
 subject that parity to significance testing rather than obscuring it.
-Our contributions follow these three properties directly.
+The novelty we claim is deliberately narrow: not a new convolution
+operator (Section~\ref{sec:ablation} shows GCN, GAT, GraphSAGE and GIN
+do not significantly differ), but the feature-node formulation itself
+together with the evaluation framework that stress-tests it on the
+three properties below, each measured rather than asserted. Our
+contributions follow these three properties directly.
 
 \begin{enumerate}
 \item[\textbf{C1}] \textbf{Representation.} We formulate clinical tabular
@@ -396,8 +406,7 @@ connected in $0/5$ folds; adding the MST restores a single component in
 $5/5$ folds (Table~\ref{tab:mstconn}). Predictive performance, however, is
 unchanged: no metric differs significantly between the two conditions
 (F1 $0.7988$ vs.\ $0.7979$; ROC-AUC $0.9008$ vs.\ $0.9035$; MCC $0.6445$
-vs.\ $0.6241$; all Holm-adjusted $p=1.0$, Tables~\ref{tab:msttau}
-and~\ref{tab:msttaustats}).
+vs.\ $0.6241$; all Holm-adjusted $p=1.0$, Table~\ref{tab:msttau}).
 The MST is thus a \emph{robustness mechanism that restores connectivity
 without improving internal accuracy}, and we retain it on that basis
 rather than as a source of predictive gain. We emphasise \emph{internal}
@@ -582,8 +591,12 @@ comparable range on accuracy and F1. All differences among the leading
 models are within one standard deviation of each other.
 Pooled out-of-fold point metrics, which aggregate every held-out
 prediction into a single estimate rather than averaging fold-wise, are
-reported in Table~\ref{tab:pooled} and agree with the fold-averaged
-values to within $0.003$ on every metric.
+reported in Table~\ref{tab:pooled}. They agree closely with the
+fold-averaged values on the ranking metrics (ROC-AUC differs by at most
+$0.005$ for every model), while threshold-dependent metrics differ more
+for the tree ensembles (up to $0.053$ on specificity for Random Forest
+and $0.052$ on MCC for LightGBM), as expected when a single pooled
+threshold replaces per-fold tuning. The ordering of models is unchanged.
 The pooled out-of-fold ROC and precision--recall
 curves (Fig.~\ref{fig:rocpr}) confirm that all models operate in a
 high-AUC regime ($\approx 0.90$), which is expected on a small,
@@ -617,20 +630,25 @@ demonstrating clear separation.}
 \end{figure*}
 
 \subsection{Statistical significance}
-Table~\ref{tab:stats} reports the significance tests, now extended to
-all four non-neural baselines. None of the eight tests (four
+Table~\ref{tab:stats} reports the significance tests against
+\emph{every} baseline in Table~\ref{tab:comparison}, not a subset: the
+two linear/ensemble baselines (Logistic Regression, Random Forest), the
+three gradient-boosting baselines (Gradient Boosting, LightGBM,
+XGBoost) and the neural baseline (MLP). None of the twelve tests (six
 comparisons $\times$ two test types) approaches the $0.05$ significance
 level after Holm correction across the family: McNemar's test on the
 pooled out-of-fold predictions gives $p=0.70$ against Logistic
-Regression, $p=0.77$ against Random Forest, $p=1.00$ against XGBoost and
-$p=0.66$ against LightGBM, and the Wilcoxon signed-rank test on per-fold
-F1 gives $p=0.25$, $p=0.51$, $p=0.60$ and $p=0.15$, respectively (Holm-adjusted
-$p\geq0.61$ throughout). We therefore characterise the GCN as
-\emph{statistically indistinguishable from} strong classical
-baselines---including modern gradient-boosted trees---not as a decisive
-improvement. This honest positioning is, in our view, more credible than
-an inflated accuracy claim and redirects the contribution toward
-representation and interpretability.
+Regression, $p=0.77$ against Random Forest, $p=0.68$ against Gradient
+Boosting, $p=0.68$ against MLP, $p=1.00$ against XGBoost and $p=0.66$
+against LightGBM, and the Wilcoxon signed-rank test on per-fold F1 gives
+$p=0.25$, $p=0.51$, $p=0.11$, $p=0.09$, $p=0.60$ and $p=0.15$,
+respectively (Holm-adjusted $p\geq0.57$ throughout). We therefore
+characterise the GCN as \emph{statistically indistinguishable from}
+strong classical baselines---including modern gradient-boosted trees and
+a comparably-sized MLP---not as a decisive improvement. This honest
+positioning is, in our view, more credible than an inflated accuracy
+claim and redirects the contribution toward representation and
+interpretability.
 
 \input{../results/latex/table_statistical_tests}
 
@@ -645,7 +663,7 @@ own best setting, which is used throughout.
 Table~\ref{tab:formulation} compares the two formulations under the
 identical protocol. The feature-node model is ahead on every metric---most
 clearly on ROC-AUC ($0.905\pm0.041$ versus $0.889\pm0.036$)---but the
-margin is modest. Per-seed DeLong tests on the pooled out-of-fold
+margin is modest. Per-seed DeLong tests~\cite{delong1988} on the pooled out-of-fold
 predictions (Table~\ref{tab:formstats}) give $p=0.351$, $0.910$ and
 $0.017$: the direction is consistent across all three seeds, yet the
 difference reaches significance in only one. \emph{In distribution we
@@ -686,7 +704,8 @@ pipeline requires a GPU.
 
 \textbf{Calibration.} Discrimination is not sufficient for a decision
 aid: predicted risks must also be calibrated. Table~\ref{tab:calib}
-reports Brier score and expected calibration error. Out-of-fold on
+reports Brier score~\cite{brier1950} and expected calibration error
+(ECE)~\cite{naeini2015ece}. Out-of-fold on
 Cleveland the GCN is the best-calibrated of the three models
 (Brier $0.124$, ECE $0.042$, against $0.124/0.047$ for Logistic
 Regression and $0.126/0.055$ for Random Forest). The more interesting
@@ -703,7 +722,8 @@ practically relevant transport result in this paper.
 
 \textbf{Clinical utility, and where it is absent.} Calibration and
 discrimination still do not establish that a model is worth using. We
-therefore computed decision curves, reporting net benefit
+therefore computed decision curves~\cite{vickers2006dca}, reporting net
+benefit
 $\mathrm{NB}=\mathrm{TP}/n-(\mathrm{FP}/n)\,p_t/(1-p_t)$ across
 clinically plausible risk thresholds against the default strategy of
 treating every patient.
@@ -791,9 +811,9 @@ Because a natural objection to a GCN is that attention-based or more
 expressive operators might do better, we repeat the entire protocol with
 GAT, GraphSAGE and GIN substituted for GCNConv, holding graph
 construction, depth, width, readout, folds and seeds fixed
-(Table~\ref{tab:convs}). No operator differs significantly from GCN:
+(Table~S2, Supplementary Material). No operator differs significantly from GCN:
 DeLong $p\ge0.63$ and McNemar $p\ge0.057$ in every comparison
-(Table~\ref{tab:convstats}). GIN attains a nominally higher accuracy
+(Table~S2). GIN attains a nominally higher accuracy
 ($0.824$ versus $0.811$), F1 and MCC, but the \emph{lowest} ROC-AUC of
 the four and requires $2.6\times$ the parameters ($3{,}393$ versus
 $1{,}281$); GAT and GraphSAGE fall between. On a thirteen-node feature
@@ -804,16 +824,13 @@ and is statistically indistinguishable from more expressive
 alternatives---rather than on grounds of superiority.
 
 \input{../results/latex/combined_ablation}
-\input{../results/latex/combined_conv}
-
-
-
-
-
+The full operator-comparison table (performance and paired
+significance tests for GAT, GraphSAGE and GIN against GCN) is provided
+as Table~S2 in the Supplementary Material.
 
 \subsection{Threshold sensitivity}
 \label{sec:threshold}
-Table~\ref{tab:threshold} reports performance
+Table~S1 (Supplementary Material) reports performance
 as a function of the correlation threshold $\tau$ together with the
 resulting graph density. Performance is robust for $\tau\in[0.10,0.20]$;
 $\tau=0.15$ maximises ROC-AUC while retaining a connected, moderately
@@ -821,8 +838,8 @@ sparse graph, which motivates our fixed choice. Very dense ($\tau=0.05$)
 and very sparse ($\tau=0.30$) graphs are both inferior, mirroring the
 topology ablation.
 
-\input{../results/latex/table_threshold_sensitivity}
-
+The full per-threshold table is provided as Table~S1 in the
+Supplementary Material.
 
 \subsection{Graph construction rule}
 \label{sec:construction}
@@ -896,8 +913,7 @@ features independently ($1.73$ versus $2.22$), which is smoothing, not
 enrichment.
 
 The ablation supports this reading and no stronger reading. Under Holm
-correction over nine paired tests (Tables~\ref{tab:toposigperf}
-and~\ref{tab:toposig}), replacing the
+correction over nine paired tests (Table~\ref{tab:toposigperf}), replacing the
 correlation graph with a \emph{random} graph of identical density
 significantly reduces ROC-AUC ($0.9051\to0.8959$, adjusted $p=0.005$): when
 propagation does occur, it matters that the edges encode genuine clinical
@@ -907,7 +923,7 @@ entirely ($0.8966$, adjusted $p=0.249$) nor making it fully connected
 exchanging GCN for GAT, GraphSAGE or GIN changes no metric significantly
 either (Section~\ref{sec:ablation}). We therefore claim exactly what the
 evidence supports: \emph{the choice of topology matters more than the
-choice of operator, and a clinically meaningful topology is measurably
+choice of operator, and a correlation-derived topology is measurably
 better than an arbitrary one}---while explicitly not claiming that message
 passing over scalar nodes outperforms treating the features independently.
 The value of the formulation on this cohort lies in the structure it
@@ -949,12 +965,12 @@ that is \emph{not} straightforwardly beneficial under this operator.
 tested above could have been a coincidence of that particular embedding
 size. We repeated the identity-embedding experiment at
 $d\in\{0,2,4,8,16,32\}$, holding everything else fixed
-(Table~\ref{tab:nodeidsweep}). The sign reversal of the graph gap holds at
+(Table~S3, Supplementary Material). The sign reversal of the graph gap holds at
 \emph{every} tested dimension, not only $d=8$: $\Delta\mathrm{ROC\text{-}AUC}$
 (Corr+MST $-$ no graph) is $+0.0089$ at $d=0$ and becomes negative at
 $d=2$ ($-0.0060$), $d=4$ ($-0.0081$), $d=8$ ($-0.0882$), $d=16$
 ($-0.0095$) and $d=32$ ($-0.0605$)
-(Table~\ref{tab:nodeidgapsweep}); none of the twelve
+(Table~S4, Supplementary Material); none of the twelve
 (dimension, contrast) pairs survives Holm correction, consistent with
 the modest effect sizes already reported at $d=8$. The magnitude is not
 monotone in $d$: the reversal is small at $d=2$, $d=4$ and $d=16$ but
@@ -973,8 +989,9 @@ mechanistic account above rather than merely illustrating it at a single
 point.
 
 \input{../results/latex/combined_nodeid}
-\input{../results/latex/table_node_identity_sweep}
-\input{../results/latex/table_node_identity_gap_sweep}
+The full dimension-sweep tables (performance/effective-rank at each
+$d$, and the corresponding paired graph-gap tests) are provided as
+Tables~S3 and~S4 in the Supplementary Material.
 \input{../results/latex/combined_toposig}
 
 \subsection{Explainability}
@@ -985,11 +1002,15 @@ yields the most faithful and sparsest explanations---leading on
 fidelity, sparsity and both deletion and insertion area
 (Fig.~\ref{fig:delins})---while Saliency is the most stable but least
 faithful. The mean feature-importance profiles concentrate on \texttt{cp}, \texttt{oldpeak}, \texttt{thalach},
-\texttt{ca} and \texttt{thal}, in agreement with the clinical literature.
+\texttt{ca} and \texttt{thal}. We call this \emph{literature-based
+clinical agreement}: the comparison is against risk factors reported in
+prior cardiovascular studies~\cite{detrano1989,petch2022opening}, not
+against a blinded clinician panel scoring our specific explanations, and
+should be read with that scope in mind.
 
 Crucially, GNNExplainer and Integrated Gradients agree strongly
 (Table~\ref{tab:xai_agree}; Spearman
-$\rho=0.79$, top-$k$ Jaccard $0.56$). Because these two
+$\rho=0.80$, top-$k$ Jaccard $0.59$). Because these two
 mechanistically different explainers converge on the same risk features,
 their agreement provides evidence of explanation reliability that a single
 method cannot offer. We therefore recommend GNNExplainer as the primary,
@@ -1054,7 +1075,7 @@ cohorts systematically do not record \texttt{ca} (95--99\% missing),
 \texttt{chol} column is entirely zero-encoded, a documented sentinel
 rather than a measurement. Complete-case counts for the full feature
 vector are 1/294 (Hungarian), 0/123 (Switzerland) and 1/200 (VA), so
-external validation of the full model is impossible in principle, not
+cross-cohort transport evaluation of the full model is impossible in principle, not
 merely inconvenient (Table~\ref{tab:extcohorts}). We therefore define a
 \emph{transportable} subset of the eight variables recorded in all four
 cohorts---\texttt{age}, \texttt{sex}, \texttt{cp}, \texttt{trestbps},
@@ -1073,6 +1094,13 @@ price of feature reduction from the price of cohort shift.
 weights and the decision threshold are all fit on Cleveland alone; each
 external cohort is scored exactly once, baselines are transported under
 the identical protocol, and the procedure is repeated over five seeds.
+The transport, calibration and decision-curve analyses that follow
+compare three models---the feature-node GCN, Logistic Regression and
+Random Forest---rather than all seven of Table~\ref{tab:comparison}:
+these are the strongest linear and ensemble baselines in distribution,
+and holding the transported set to three keeps the five-seed $\times$
+three-cohort protocol and its bootstrap intervals interpretable. The
+boosted-tree baselines are reported in distribution only.
 
 \textbf{Result.} The feature-node GCN attains a higher ROC-AUC than both
 baselines on all three external cohorts (Hungarian $0.876\pm0.004$,
@@ -1168,7 +1196,7 @@ residual bias on VA.
 \begin{figure*}[t]
 \centering
 \includegraphics[width=\textwidth]{fig31_external_auc.png}
-\caption{External validation. Left: ROC-AUC by cohort for the transported
+\caption{Cross-cohort transport evaluation. Left: ROC-AUC by cohort for the transported
 models (mean$\pm$std over five seeds); the feature-node GCN leads on all
 three cohorts. Right: specificity under distribution shift; Random Forest
 degenerates toward majority-class prediction while the GCN retains a
@@ -1227,7 +1255,7 @@ occurs (Section~\ref{sec:graph}), so the structure a clinician is asked to
 trust can be examined independently of model fit---a property no tabular
 baseline offers. Downstream, three mechanistically distinct attribution
 methods converge on similar rankings (GNNExplainer and Integrated
-Gradients: Spearman $\rho=0.79$, top-$k$ Jaccard $0.56$) that align with
+Gradients: Spearman $\rho=0.80$, top-$k$ Jaccard $0.59$) that align with
 established cardiovascular risk factors. Convergence across methods
 matters more than any single attribution: it indicates the explanation
 reflects the learned function rather than an artefact of one explainer.
@@ -1290,10 +1318,16 @@ to the convolution. What remains, and what the ablation localises, is the
 graph \emph{construction}---selective, correlation-derived sparsity, which
 outperforms both random and fully connected topologies of comparable size.
 More broadly, our results caution that on small, near-balanced clinical
-cohorts differences between well-tuned models are usually within noise;
-only a strictly shared protocol with significance testing distinguishes
-genuine improvement from favourable splitting, and reporting a model's
-non-superiority is often the more informative result.
+cohorts differences between well-tuned models are usually within noise.
+This matters for interpreting the many prior studies on this same
+cohort that report high headline accuracies from hybrid or ensemble
+pipelines without paired significance testing across a shared
+protocol~\cite{mohan2019hybrid,latha2019ensemble}: without such testing
+it cannot be established whether the reported margins exceed
+split-to-split variation. Only a strictly shared protocol with
+significance testing distinguishes genuine improvement from favourable
+splitting, and reporting a model's non-superiority is often the more
+informative result.
 Table~\ref{tab:literature} positions our formulation against
 representative paradigms.
 
