@@ -1,0 +1,333 @@
+%% =====================================================================
+%%  ieeeaccessemul.sty  --  IEEE Access visual style, emulated over IEEEtran
+%%
+%%  WHY THIS EXISTS
+%%      The official `ieeeaccess.cls' is distributed only through IEEE's
+%%      author-template channel (template-selector.ieee.org); it is not on
+%%      CTAN and cannot be fetched automatically. This package reproduces
+%%      the IEEE Access page design on top of the freely available
+%%      IEEEtran class, so the manuscript can be reviewed and circulated
+%%      in Access livery before the official class is dropped in.
+%%
+%%  IT IS AN EMULATION, NOT THE OFFICIAL CLASS.
+%%      Drop `ieeeaccess.cls' beside main_ieeeaccess.tex and this package
+%%      is bypassed automatically -- the real class then governs the
+%%      layout and no source edit is needed. Use the official class for
+%%      the camera-ready submission.
+%%
+%%  WHAT IT REPRODUCES (measured from the official April-2024 template PDF)
+%%      * IEEE brand blue #00629B on the title, the ABSTRACT / INDEX TERMS
+%%        labels, section headings and figure-caption labels
+%%      * full-width single-column front matter (history line, DOI, title,
+%%        authors with superscript affiliation marks, addresses,
+%%        corresponding-author line, funding footnote, abstract, index
+%%        terms) above a two-column body, all on page 1
+%%      * bold Helvetica for title / authors / headings / captions,
+%%        Times for body text
+%%      * "I. INTRODUCTION" / "A. SUBHEAD" / "1) SUBSUBHEAD" heading forms
+%%      * IEEE Access running head and VOLUME/page footer
+%% =====================================================================
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{ieeeaccessemul}[2026/08/30 v1.0 IEEE Access look over IEEEtran]
+
+\RequirePackage{xcolor}
+\RequirePackage{fancyhdr}
+\RequirePackage{textcase}              % math-safe \MakeTextUppercase
+\RequirePackage{iftex}
+
+%% Display type is Helvetica. Under pdfTeX `helvet' supplies it directly.
+%% Under XeTeX/LuaTeX the document is already in TU encoding (newtxtext
+%% loads fontspec), where the T1 `phv' shapes do not exist and would
+%% silently fall back to Latin Modern -- so the sans family is set through
+%% fontspec to TeX Gyre Heros, the Helvetica metric clone.
+\ifPDFTeX
+  \RequirePackage[scaled=0.94]{helvet}
+\else
+  \RequirePackage{fontspec}
+  \setsansfont{texgyreheros-regular.otf}[
+    BoldFont       = texgyreheros-bold.otf,
+    ItalicFont     = texgyreheros-italic.otf,
+    BoldItalicFont = texgyreheros-bolditalic.otf,
+    Scale          = 0.94 ]
+\fi
+
+%% ---------------------------------------------------------------- colour
+%% Sampled from the official template PDF: one identical #00629B on the
+%% title, the ABSTRACT and INDEX TERMS labels, section heads and FIGURE
+%% labels. The header wordmark is a lighter tint of the same hue.
+\definecolor{accessblue}{RGB}{0,98,155}
+\definecolor{accesstint}{RGB}{119,170,203}
+%% Sub-level heading grey, sampled off the template pages:
+%% section heads measure #00629B (B-R=+155), sub/subsub heads
+%% measure #58595B (B-R=+3) -- grey, not blue and not black.
+\definecolor{accessgrey}{RGB}{88,89,91}
+\newcommand{\accessfont}{\sffamily}
+
+%% ------------------------------------------------- front-matter data slots
+%% main_ieeeaccess.tex declares these with \providecommand as no-ops for
+%% plain IEEEtran, so they already exist by the time this package loads and
+%% must be redefined rather than newly defined.
+\newtoks\access@addrtoks
+\def\access@history{}
+\def\access@doi{}
+\def\access@corresp{}
+\def\access@tfootnote{}
+\def\access@runninghead{}
+
+%% Plain \def throughout: under IEEEtran none of these exist yet, so
+%% \renewcommand would fail, and \newcommand would fail later if the
+%% manuscript's own \providecommand no-ops had already been read.
+\def\history#1{\def\access@history{#1}}
+\def\doi#1{\def\access@doi{#1}}
+\def\corresp#1{\def\access@corresp{#1}}
+\def\tfootnote#1{\def\access@tfootnote{#1}}
+\def\accessrunninghead#1{\def\access@runninghead{#1}}
+\def\accessvolume#1{\def\access@volume{#1}}
+\def\access@volume{VOLUME XX, 2026}
+
+\def\access@addrline#1#2{\textsuperscript{#1}#2\par}
+\def\address{\@ifnextchar[{\access@address}{\access@address[]}}
+\def\access@address[#1]#2{%
+  \access@addrtoks=\expandafter{\the\access@addrtoks\access@addrline{#1}{#2}}}
+
+%% Author-block markup. The official template PDF sets author names in
+%% mixed case, so no uppercasing is applied here.
+\def\authorrefmark#1{\textsuperscript{\normalfont #1}}
+\renewcommand{\IEEEmembership}[1]{#1}
+
+%% ------------------------------------------------ front-matter emission
+%% IEEE Access puts the title, authors, abstract and index terms full width
+%% above the two-column body on page 1. LaTeX can only do that through
+%% \twocolumn[...], whose argument must be complete before the body begins
+%% -- so the abstract and keywords environments capture their contents into
+%% boxes, and the whole block is emitted when the keywords environment
+%% closes (the last front-matter element in the source).
+\newsavebox{\access@absbox}
+\newsavebox{\access@keybox}
+\newif\ifaccess@fmdone \access@fmdonefalse
+\newif\ifaccess@keyseen \access@keyseenfalse
+
+%% LaTeX environments form a group and the \end{...} code runs INSIDE it,
+%% so a plain lrbox assignment is rolled back when the environment closes
+%% and \usebox later yields an empty box. Re-assigning globally before the
+%% group ends is what makes the captured front matter survive.
+\def\access@globalise#1{\global\setbox#1=\box#1\relax}
+
+\newcommand{\access@labelrun}[1]{%
+  {\accessfont\bfseries\fontsize{9.5}{11}\selectfont\color{accessblue}#1}%
+  \hskip 0.6em\relax}
+
+\renewenvironment{abstract}
+  {\begin{lrbox}{\access@absbox}%
+   \begin{minipage}{\textwidth}%
+   \normalfont\fontsize{9.5}{11.4}\selectfont
+   \access@labelrun{ABSTRACT}\ignorespaces}
+  {\end{minipage}\end{lrbox}\access@globalise{\access@absbox}}
+
+%% Both keyword environment names are captured, so the source compiles
+%% whichever one it uses.
+\newenvironment{keywords}
+  {\global\access@keyseentrue
+   \begin{lrbox}{\access@keybox}%
+   \begin{minipage}{\textwidth}%
+   \normalfont\fontsize{9.5}{11.4}\selectfont
+   \access@labelrun{INDEX TERMS}\ignorespaces}
+  {\end{minipage}\end{lrbox}\access@globalise{\access@keybox}\access@emitfrontmatter}
+
+\renewenvironment{IEEEkeywords}
+  {\global\access@keyseentrue
+   \begin{lrbox}{\access@keybox}%
+   \begin{minipage}{\textwidth}%
+   \normalfont\fontsize{9.5}{11.4}\selectfont
+   \access@labelrun{INDEX TERMS}\ignorespaces}
+  {\end{minipage}\end{lrbox}\access@globalise{\access@keybox}\access@emitfrontmatter}
+
+%% \maketitle appears in the source before the abstract, so it cannot emit
+%% anything yet; it only records that it was called. \IEEEPARstart is the
+%% first body command after the index terms, so it is also hooked as a
+%% safety net in case a source has no keywords block at all.
+\renewcommand{\maketitle}{\relax}
+
+\def\access@frontmatter{%
+  \normalfont\raggedright
+  {\fontsize{8}{9.6}\selectfont
+   \access@history\par
+   \ifx\access@doi\@empty\else Digital Object Identifier \access@doi\par\fi}%
+  \vskip 16\p@
+  {\accessfont\bfseries\fontsize{20}{23.5}\selectfont\color{accessblue}%
+   \raggedright\@title\par}%
+  \vskip 14\p@
+  {\accessfont\bfseries\fontsize{10.5}{12.5}\selectfont\raggedright\@author\par}%
+  \vskip 3\p@
+  {\fontsize{8}{9.6}\selectfont\the\access@addrtoks}%
+  \ifx\access@corresp\@empty\else
+    \vskip 5\p@ {\fontsize{8}{9.6}\selectfont\access@corresp\par}%
+  \fi
+  \ifx\access@tfootnote\@empty\else
+    \vskip 5\p@
+    {\fontsize{8}{9.6}\selectfont\access@tfootnote\par}%
+  \fi
+  \vskip 14\p@
+  \usebox{\access@absbox}\par
+  \vskip 10\p@
+  \usebox{\access@keybox}\par
+  \vskip 6\p@
+}
+
+\def\access@emitfrontmatter{%
+  \ifaccess@fmdone\else
+    \global\access@fmdonetrue
+    \twocolumn[{\access@frontmatter}]%
+    \thispagestyle{accesstitle}%
+  \fi}
+
+%% ------------------------------------------------------------- headings
+%% Access heading forms: "I. INTRODUCTION" (blue bold Helvetica),
+%% "A. SUBHEAD" (black italic), "1) SUBSUBHEAD" (black roman).
+\def\@seccntformat#1{\csname access@cnt@#1\endcsname}
+%% Printed heading prefixes only. \thesubsection is deliberately NOT
+%% touched: it stays in IEEEtran's "VII-F" form so the 16 \ref{sec:...}
+%% cross-references in the prose keep reading "Section VII-F". Access
+%% prints the heading itself as plain "A." / "1)".
+\def\access@cnt@section{\thesection.\hskip 0.5em\relax}
+\def\access@cnt@subsection{\Alph{subsection}.\hskip 0.5em\relax}
+\def\access@cnt@subsubsection{\arabic{subsubsection})\hskip 0.5em\relax}
+
+\renewcommand{\section}{\@startsection{section}{1}{\z@}%
+  {2.4ex plus 1.2ex minus 0.6ex}{1.0ex plus 0.3ex minus 0ex}%
+  {\normalfont\accessfont\bfseries\fontsize{9.5}{11}\selectfont
+   \color{accessblue}\raggedright}}
+%% Magnified template crops show subsection heads set in SANS BOLD
+%% ITALIC and subsubsection heads in SANS UPRIGHT -- both grey, not the
+%% serif italic the base class uses.
+\renewcommand{\subsection}{\@startsection{subsection}{2}{\z@}%
+  {2.2ex plus 1ex minus 0.5ex}{0.8ex plus 0.3ex minus 0ex}%
+  {\normalfont\accessfont\bfseries\itshape\fontsize{9}{10.5}\selectfont
+   \color{accessgrey}\raggedright}}
+\renewcommand{\subsubsection}{\@startsection{subsubsection}{3}{\z@}%
+  {1.6ex plus 0.8ex minus 0.4ex}{0.6ex plus 0.2ex minus 0ex}%
+  {\normalfont\accessfont\fontsize{9}{10.5}\selectfont
+   \color{accessgrey}\raggedright}}
+
+%% Access sets all three heading levels in caps. Each heading command is
+%% wrapped so the PRINTED argument is uppercased while the optional
+%% ToC/bookmark argument keeps its original case. \MakeTextUppercase is
+%% math-safe, which matters because one subsection title contains $\tau$.
+%% Uppercase pass that is safe against both math and hyperref.
+%%   * textcase's \MakeTextUppercase already leaves math mode untouched,
+%%     which matters because captions contain $k$, $|r|$ and $\tau$ --
+%%     the \uppercase primitive would rewrite those variable names.
+%%   * hyperref injects a float anchor into the caption argument, and the
+%%     uppercase expansion pass tears that anchor apart ("Undefined control
+%%     sequence \@hyper@@anchor"). Making the anchor macros \protected for
+%%     the duration of the pass stops expansion at their boundary, so they
+%%     reach the page intact while surrounding text still uppercases.
+\long\def\access@uc#1{%
+  \begingroup
+    \@ifundefined{Hy@raisedlink}{}{%
+      \let\access@o@raisedlink\Hy@raisedlink
+      \protected\def\Hy@raisedlink##1{\access@o@raisedlink{##1}}}%
+    \@ifundefined{hyper@@anchor}{}{%
+      \let\access@o@anchor\hyper@@anchor
+      \protected\def\hyper@@anchor##1##2{\access@o@anchor{##1}{##2}}}%
+    \MakeTextUppercase{#1}%
+  \endgroup}
+
+\newcommand{\access@upwrap}[1]{%
+  \expandafter\let\csname access@orig@#1\expandafter\endcsname\csname #1\endcsname
+  \expandafter\edef\csname #1\endcsname{%
+    \noexpand\@ifstar
+      {\expandafter\noexpand\csname access@star@#1\endcsname}%
+      {\noexpand\@dblarg{\expandafter\noexpand\csname access@arg@#1\endcsname}}}%
+  \expandafter\def\csname access@star@#1\endcsname##1{%
+    \csname access@orig@#1\endcsname*{\access@uc{##1}}}%
+  \expandafter\def\csname access@arg@#1\endcsname[##1]##2{%
+    \csname access@orig@#1\endcsname[##1]{\access@uc{##2}}}%
+}
+\access@upwrap{section}
+\access@upwrap{subsection}
+\access@upwrap{subsubsection}
+
+%% ------------------------------------------------------------- captions
+\renewcommand{\figurename}{FIGURE}
+\renewcommand{\tablename}{TABLE}
+
+\long\def\@makecaption#1#2{%
+  \ifx\@captype\@IEEEtablestring
+    %% Table: caps label line, then caps title, both centred Helvetica.
+    %% Measured on the template: label and title sit on consecutive tight
+    %% lines (5px gap against a 12px body pitch), set in SERIF with the
+    %% title in small caps -- not the sans caps used for section heads.
+    \bgroup\par\centering
+    {\fontsize{8}{9.2}\selectfont\access@uc{#1}}\\[0.5\p@]%
+    %% #2 is passed through untouched: the captions are already mixed
+    %% case, and an expanding case-change pass here collides with the
+    %% \protect'ed anchor hyperref injects into caption arguments.
+    {\fontsize{8}{9.2}\selectfont\scshape #2}%
+    \par\addvspace{0.3\baselineskip}\egroup
+  \else
+    %% Figure: blue bold "FIGURE n." run into a Helvetica caption.
+    \vskip\abovecaptionskip
+    \setbox\@tempboxa\hbox{%
+      {\accessfont\bfseries\fontsize{8}{9.6}\selectfont\color{accessblue}#1.}%
+      \nobreakspace\nobreakspace
+      {\accessfont\fontsize{8}{9.6}\selectfont #2}}%
+    \ifdim\wd\@tempboxa>\hsize
+      \setbox\@tempboxa\hbox{%
+        {\accessfont\bfseries\fontsize{8}{9.6}\selectfont\color{accessblue}#1.}%
+        \nobreakspace\nobreakspace}%
+      \parbox[t]{\hsize}{\accessfont\fontsize{8}{9.6}\selectfont
+        \noindent\unhbox\@tempboxa #2}%
+    \else
+      \hbox to\hsize{\accessfont\fontsize{8}{9.6}\selectfont\box\@tempboxa\hfil}%
+    \fi
+    \vskip\belowcaptionskip
+  \fi}
+
+%% ------------------------------------------------------- page furniture
+\newcommand{\access@wordmark}{%
+  {\accessfont\bfseries\fontsize{11}{12}\selectfont
+   \textcolor{accesstint}{IEEE}\kern1\p@
+   \textcolor{accesstint}{\itshape Access}}}
+
+%% Running-head band. We want a taller \headheight (13pt, to clear the
+%% 11pt "IEEE Access" wordmark) and a tighter \headsep (10pt) than IEEEtran
+%% uses, while leaving the BODY text block exactly where IEEEtran put it.
+%%
+%% Since the body top edge is  1in + \topmargin + \headheight + \headsep,
+%% holding it fixed requires  \topmargin += (old hh + old hs) - (new hh + new hs).
+%% Measured from IEEEtran.cls [journal]: hh = 12pt, hs = 21.404pt,
+%% \topmargin = -52.904pt, so the required shift is +10.404pt.
+%%
+%% This MUST be computed, not hardcoded: an earlier revision guessed
+%% -23pt (on the wrong premise that IEEEtran left \headheight at 0pt),
+%% which drove the header top edge to 1in - 75.9pt = -3.6pt -- i.e. off
+%% the top of the sheet, so the running head was clipped by the media box
+%% and the whole body block rode 33.4pt too high.
+\@tempdima=\headheight  % old hh
+\advance\@tempdima\headsep      % + old hs
+\setlength{\headheight}{13\p@}
+\setlength{\headsep}{10\p@}
+\advance\@tempdima-\headheight  % - new hh
+\advance\@tempdima-\headsep     % - new hs
+\advance\topmargin\@tempdima
+
+\fancypagestyle{accessmain}{%
+  \fancyhf{}%
+  \fancyhead[L]{\access@wordmark}%
+  \fancyhead[R]{\fontsize{7.5}{9}\selectfont\itshape\access@runninghead}%
+  \fancyfoot[L]{\fontsize{8}{9.6}\selectfont\access@volume}%
+  \fancyfoot[R]{\fontsize{8}{9.6}\selectfont\thepage}%
+  \renewcommand{\headrulewidth}{0.4\p@}%
+  \renewcommand{\footrulewidth}{\z@}%
+}
+\fancypagestyle{accesstitle}{%
+  \fancyhf{}%
+  \fancyfoot[L]{\fontsize{8}{9.6}\selectfont\access@volume}%
+  \fancyfoot[R]{\fontsize{8}{9.6}\selectfont\thepage}%
+  \renewcommand{\headrulewidth}{\z@}%
+  \renewcommand{\footrulewidth}{\z@}%
+}
+\AtBeginDocument{\pagestyle{accessmain}}
+
+\endinput
