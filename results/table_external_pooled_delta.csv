@@ -1,0 +1,5 @@
+Cohort,Estimand,n (patients),B (valid),Comparison,ΔAUC,95% CI,Excludes zero
+Pooled external cohorts,stratified,548,2000,GCN − Logistic Regression,+0.153,"[+0.075, +0.236]",yes
+Pooled external cohorts,stratified,548,2000,GCN − Random Forest,+0.050,"[+0.004, +0.135]",yes
+Pooled external cohorts,concatenated,548,2000,GCN − Logistic Regression,+0.128,"[+0.083, +0.175]",yes
+Pooled external cohorts,concatenated,548,2000,GCN − Random Forest,+0.050,"[+0.014, +0.120]",yes

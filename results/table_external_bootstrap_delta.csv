@@ -1,7 +1,7 @@
 Cohort,Comparison,ΔAUC,95% CI,Excludes zero
-Hungarian,GCN − Logistic Regression,+0.169,"[+0.108, +0.231]",yes
-Hungarian,GCN − Random Forest,+0.034,"[-0.007, +0.075]",no
-Switzerland,GCN − Logistic Regression,+0.116,"[-0.184, +0.407]",no
-Switzerland,GCN − Random Forest,+0.067,"[-0.091, +0.215]",no
-VA Long Beach,GCN − Logistic Regression,+0.151,"[+0.020, +0.289]",yes
-VA Long Beach,GCN − Random Forest,+0.052,"[-0.032, +0.156]",no
+Hungarian,GCN − Logistic Regression,+0.170,"[+0.108, +0.233]",yes
+Hungarian,GCN − Random Forest,+0.030,"[-0.015, +0.111]",no
+Switzerland,GCN − Logistic Regression,+0.115,"[-0.190, +0.409]",no
+Switzerland,GCN − Random Forest,+0.098,"[-0.051, +0.332]",no
+VA Long Beach,GCN − Logistic Regression,+0.151,"[+0.021, +0.289]",yes
+VA Long Beach,GCN − Random Forest,+0.047,"[-0.031, +0.123]",no

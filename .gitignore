@@ -1,8 +1,52 @@
+# --- Python ---
 __pycache__/
-*.pyc
-*.pyo
+*.py[cod]
+*.egg-info/
+.ipynb_checkpoints/
+.venv/
+venv/
+
+# --- Secrets: never commit credentials ---
+.env
+.env.*
+*.pem
+*_token*
+*_secret*
+credentials.json
+
+# --- LaTeX build products (the .tex and figures are the source of truth) ---
+paper/*.aux
+paper/*.log
+paper/*.out
+paper/*.xdv
+paper/*.bbl
+paper/*.blg
+paper/*.synctex.gz
+paper/*.fls
+paper/*.fdb_latexmk
+paper/build.log
+paper/isotest/
+paper/probe_geo/
+probe_ac/
+
+# --- run logs / scratch ---
+*.log
+pooled_run.log
+robust.log
+torch_install.log
+torch_nodeps.log
+pyg.log
+
+# --- OS noise ---
 .DS_Store
-*.aux
-*.out
+Thumbs.db
+
+# --- restored from the repository's original .gitignore ---
+*.pyo
 *.toc
 *.synctex.gz
+
+# session scratch
+paper/hdr_check.png
+paper/tab_check.png
+PUSH_INSTRUCTIONS.md

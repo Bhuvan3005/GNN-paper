@@ -69,7 +69,145 @@ def stratified_resample(y, rng):
     return np.concatenate(idx)
 
 
+def pooled_bootstrap(scored_by_seed, ext_data, rng, n_boot=B):
+    """
+    Joint bootstrap across ALL external cohorts -> one paired interval.
+
+    WHY A JOINT BOOTSTRAP AND NOT A COMBINATION OF THE PER-COHORT ONES
+    -----------------------------------------------------------------
+    The three per-cohort intervals above cannot be combined post hoc (e.g.
+    by inverse-variance / random-effects meta-analysis) without an
+    independence assumption that is false here: all three cohorts are
+    scored by the SAME fitted models, so their errors are correlated
+    through the shared fit. Treating them as independent understates the
+    variance of the combined estimate. The only honest combination
+    resamples the cohorts jointly, which is what this does.
+
+    Concretely: within a replicate the seed s is drawn ONCE and used for
+    every cohort, mirroring deployment (one fitted model transported to
+    all sites). That shared draw is precisely the correlation a post-hoc
+    combination cannot represent.
+
+    TWO ESTIMANDS, BOTH REPORTED
+    ----------------------------
+    (a) STRATIFIED (primary). AUC is computed WITHIN each cohort on the
+        resample, then combined as a complete-case-weighted mean. This is
+        the transport claim: how well does the model separate cases from
+        controls *at a site*.
+
+    (b) CONCATENATED (secondary, diagnostic only). One ROC over all
+        patients merged into a single ranking. Do NOT headline this:
+        cohort prevalence runs from 36% (Hungarian) to 93%
+        (Switzerland), so a model whose scores merely shift with cohort
+        is rewarded for discriminating *sites* rather than *patients*.
+        Reported so the gap between (a) and (b) is visible rather than
+        hidden.
+
+    Resampling is stratified by cohort AND class: each cohort contributes
+    its own patients with per-class counts preserved, so Switzerland's 8
+    negatives stay 8 negatives and cannot vanish from a replicate.
+    """
+    cohort_names = list(ext_data.keys())
+    y_by_cohort = {c: np.asarray(scored_by_seed[0][c]["y"]).astype(int)
+                   for c in cohort_names}
+    n_by_cohort = {c: len(y_by_cohort[c]) for c in cohort_names}
+    total_n = sum(n_by_cohort.values())
+
+    strat = {m: np.full(n_boot, np.nan) for m in MODELS}
+    concat = {m: np.full(n_boot, np.nan) for m in MODELS}
+    strat_d = {m: np.full(n_boot, np.nan) for m in MODELS[1:]}
+    concat_d = {m: np.full(n_boot, np.nan) for m in MODELS[1:]}
+
+    for b in range(n_boot):
+        s = rng.integers(len(SEEDS))          # ONE model draw for all cohorts
+        idx_by_cohort = {c: stratified_resample(y_by_cohort[c], rng)
+                         for c in cohort_names}
+
+        per_model_strat, per_model_concat = {}, {}
+        for m in MODELS:
+            num, ys, ps = 0.0, [], []
+            ok = True
+            for c in cohort_names:
+                idx = idx_by_cohort[c]
+                yb = y_by_cohort[c][idx]
+                pb = np.asarray(scored_by_seed[s][c][m][0])[idx]
+                if yb.min() == yb.max():      # cannot happen under stratification
+                    ok = False
+                    break
+                num += n_by_cohort[c] * roc_auc_score(yb, pb)
+                ys.append(yb)
+                ps.append(pb)
+            if not ok:
+                break
+            per_model_strat[m] = num / total_n
+            per_model_concat[m] = roc_auc_score(np.concatenate(ys),
+                                               np.concatenate(ps))
+        if len(per_model_strat) != len(MODELS):
+            continue
+
+        for m in MODELS:
+            strat[m][b] = per_model_strat[m]
+            concat[m][b] = per_model_concat[m]
+        for m in MODELS[1:]:
+            strat_d[m][b] = per_model_strat["GCN (Ours)"] - per_model_strat[m]
+            concat_d[m][b] = per_model_concat["GCN (Ours)"] - per_model_concat[m]
+
+    def summarise(store, kind, is_delta):
+        out = []
+        for m in (MODELS[1:] if is_delta else MODELS):
+            v = store[m][~np.isnan(store[m])]
+            lo, hi = np.percentile(v, [2.5, 97.5])
+            row = {"Cohort": "Pooled external cohorts", "Estimand": kind,
+                   "n (patients)": total_n, "B (valid)": int(len(v))}
+            if is_delta:
+                row.update({
+                    "Comparison": f"GCN \u2212 {m}",
+                    "\u0394AUC": f"{np.mean(v):+.3f}",
+                    "95% CI": f"[{lo:+.3f}, {hi:+.3f}]",
+                    "Excludes zero": "yes" if (lo > 0 or hi < 0) else "no",
+                })
+            else:
+                row.update({
+                    "Model": m,
+                    "AUC": f"{np.mean(v):.3f}",
+                    "95% CI": f"[{lo:.3f}, {hi:.3f}]",
+                    "CI width": round(float(hi - lo), 3),
+                })
+            out.append(row)
+        return out
+
+    auc_rows = (summarise(strat, "stratified", False)
+                + summarise(concat, "concatenated", False))
+    delta_rows = (summarise(strat_d, "stratified", True)
+                  + summarise(concat_d, "concatenated", True))
+    return pd.DataFrame(auc_rows), pd.DataFrame(delta_rows)
+
+
+DELTA_COL = "\u0394AUC"
+
+
+def emit_latex_rows(delta_df):
+    """Print the two table_external_bootstrap_delta rows ready to paste."""
+    prim = delta_df[delta_df["Estimand"] == "stratified"]
+    print("\n% --- paste into panel (b) of tab:extbootdelta ---")
+    for _, r in prim.iterrows():
+        comp = r["Comparison"].replace("\u2212", "$-$")
+        point = r[DELTA_COL].lstrip("+")
+        ci = r["95% CI"]
+        excl = r["Excludes zero"]
+        print("Pooled external cohorts & {} & {} & {} & {} \\\\".format(
+            comp, point, ci, excl))
+
+
 def main():
+    import argparse
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument("--pooled", action="store_true",
+                    help="also run the joint bootstrap across all external "
+                         "cohorts and emit the pooled rows for "
+                         "tab:extbootdelta")
+    args = ap.parse_args()
+
     patch_pipeline_features(EXT_FEATURES, EXT_CATEGORICAL)
     print("=" * 78)
     print("BOOTSTRAP CONFIDENCE INTERVALS — external validation")
@@ -154,6 +292,25 @@ def main():
     print(delta_df.to_string(index=False))
     print("\nSaved: results/table_external_bootstrap_auc.csv, "
           "results/table_external_bootstrap_delta.csv")
+
+    if args.pooled:
+        print("\n" + "=" * 78)
+        print("JOINT POOLED BOOTSTRAP — all external cohorts resampled together")
+        print(f"B = {B}, seed shared across cohorts within each replicate")
+        print("=" * 78)
+        p_auc, p_delta = pooled_bootstrap(scored_by_seed, ext_data, RNG)
+        p_auc.to_csv("results/table_external_pooled_auc.csv", index=False)
+        p_delta.to_csv("results/table_external_pooled_delta.csv", index=False)
+        print("\nPOOLED AUC")
+        print(p_auc.to_string(index=False))
+        print("\nPOOLED PAIRED \u0394AUC vs THE FEATURE-NODE GCN")
+        print(p_delta.to_string(index=False))
+        emit_latex_rows(p_delta)
+        print("\nSaved: results/table_external_pooled_auc.csv, "
+              "results/table_external_pooled_delta.csv")
+        print("\nNOTE: the 'stratified' rows are the ones to report. The "
+              "'concatenated' rows are diagnostic only -- they let a model "
+              "profit from between-cohort prevalence differences.")
 
 
 if __name__ == "__main__":

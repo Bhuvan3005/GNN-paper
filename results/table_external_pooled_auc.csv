@@ -1,0 +1,7 @@
+Cohort,Estimand,n (patients),B (valid),Model,AUC,95% CI,CI width
+Pooled external cohorts,stratified,548,2000,GCN (Ours),0.808,"[0.751, 0.863]",0.113
+Pooled external cohorts,stratified,548,2000,Logistic Regression,0.655,"[0.590, 0.716]",0.125
+Pooled external cohorts,stratified,548,2000,Random Forest,0.758,"[0.658, 0.831]",0.173
+Pooled external cohorts,concatenated,548,2000,GCN (Ours),0.850,"[0.817, 0.882]",0.065
+Pooled external cohorts,concatenated,548,2000,Logistic Regression,0.722,"[0.681, 0.762]",0.081
+Pooled external cohorts,concatenated,548,2000,Random Forest,0.800,"[0.723, 0.850]",0.127
