@@ -18,3 +18,17 @@ Self-contained source for the manuscript. Compiles standalone:
 - This folder is a snapshot. Re-running the results pipeline regenerates
   `results/` upstream but does NOT update the tables inlined here — rebuild
   the snapshot from `paper/` rather than hand-editing this copy.
+
+## Humanized variant
+
+`humanized.latex` / `humanized.pdf` are a copyedited version of the
+manuscript: the prose was rewritten for more natural sentence rhythm and
+less formulaic phrasing. All 2173 numeric values, 46 citations, 95
+cross-references, 751 inline-math spans, 21 tables, 12 figures and 43
+bibliography entries are byte-identical to `main_ieeeaccess.tex`, and no
+claim or hedge was altered. Compiles to the same 21 pages, 0 overfull
+boxes, 0 undefined references.
+
+To build it, tectonic/pdflatex expect a `.tex` extension:
+
+    cp humanized.latex humanized.tex && tectonic -X compile humanized.tex
